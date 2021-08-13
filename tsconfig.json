@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "paths": {
+      "@/*": [
+        "./client/src/*"
+      ]
+    }
+  },
+  "include": ["client/src/**/*.ts", "client/src/**/*.d.ts", "client/src/**/*.tsx", "client/src/**/*.vue"]
+}
