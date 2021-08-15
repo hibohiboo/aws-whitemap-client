@@ -124,29 +124,33 @@
     :show-header="false"
     :maximizable="true"
     content-class="p-0"
+    :draggable="true"
+    :keepInViewPort="true"
+    :minX="0"
+    :minY="0"
   >
     <img :src="displayImage" alt="preview" :style="{ width: '100%' }"
   /></Dialog>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed } from 'vue';
-import RoomInputDialog from '@/components/organisms/RoomInputDialog.vue';
-import { useAuthStore } from '@/stores/auth';
-import { useRoomStore } from '@/stores/room';
-import Button from 'primevue/button';
-import Carousel from 'primevue/carousel';
-import roomsStore from '@/stores/rooms';
-import Tag from 'primevue/tag';
-import InputText from 'primevue/inputtext';
-import Dialog from 'primevue/dialog';
+import { ref, defineComponent, computed } from "vue";
+import RoomInputDialog from "@/components/organisms/RoomInputDialog.vue";
+import { useAuthStore } from "@/stores/auth";
+import { useRoomStore } from "@/stores/room";
+import Button from "primevue/button";
+import Carousel from "primevue/carousel";
+import roomsStore from "@/stores/rooms";
+import Tag from "primevue/tag";
+import InputText from "primevue/inputtext";
+import Dialog from "primevue/dialog";
 
 export default defineComponent({
   components: { RoomInputDialog, Carousel, Button, Tag, InputText, Dialog },
-  name: 'Main',
+  name: "Main",
   setup: () => {
-    const query = decodeURI(location.search).replace('?', '');
-    const q = ref(query || '');
+    const query = decodeURI(location.search).replace("?", "");
+    const q = ref(query || "");
 
     const { signin, state } = useAuthStore();
     const { openCreateModal, openEditModal } = useRoomStore();
@@ -155,24 +159,24 @@ export default defineComponent({
 
     const responsiveOptions = [
       {
-        breakpoint: '1024px',
+        breakpoint: "1024px",
         numVisible: 3,
         numScroll: 3,
       },
       {
-        breakpoint: '600px',
+        breakpoint: "600px",
         numVisible: 2,
         numScroll: 2,
       },
       {
-        breakpoint: '480px',
+        breakpoint: "480px",
         numVisible: 1,
         numScroll: 1,
       },
     ];
 
     const displayModal = ref(false);
-    const displayImage = ref('');
+    const displayImage = ref("");
     const openDisplayModal = (img: string) => {
       displayImage.value = img;
       displayModal.value = true;
@@ -188,7 +192,7 @@ export default defineComponent({
       `https://twitter.com/intent/tweet?url=https://az-php-app.azurewebsites.net/room/${uid}/${roomId}?${encodeURI(
         encodeURI(title),
       )}`; // tweetの画面で1回デコードされるので、tweetの画面でもエンコードされた文字列であるように2回エンコードする
-    const createTags = (tags: string) => tags.split(' ').filter((i) => !!i);
+    const createTags = (tags: string) => tags.split(" ").filter((i) => !!i);
     return {
       openCreateModal,
       openEditModal,

@@ -5,6 +5,10 @@
     v-model:visible="room.displayModal"
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     :style="{ width: '50vw' }"
+    :draggable="true"
+    :keepInViewPort="true"
+    :minX="0"
+    :minY="0"
   >
     <div>
       <h5>タイトル※必須</h5>
@@ -78,23 +82,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Dialog from 'primevue/dialog';
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import { useRoomStore } from '@/stores/room';
-import FileUpload from 'primevue/fileupload';
+import { defineComponent } from "vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import { useRoomStore } from "@/stores/room";
+import FileUpload from "primevue/fileupload";
+
+// Diralog の draggable、keepInViewPort、minX、minYについては型では必須となっているが、実装ではデフォルト値がある。デフォルト値を設定。
 
 export default defineComponent({
   components: { Dialog, Button, InputText, FileUpload },
-  name: 'RoomInputDialog',
+  name: "RoomInputDialog",
 
   setup: () => {
     const { room, state, createRoom, closeModal } = useRoomStore();
-    const title = room.isUpdate ? '編集' : '登録';
+    const title = room.isUpdate ? "編集" : "登録";
 
     const uploaded = () => {
-      alert('画像のアップロードに成功しました');
+      alert("画像のアップロードに成功しました");
     };
 
     return {
