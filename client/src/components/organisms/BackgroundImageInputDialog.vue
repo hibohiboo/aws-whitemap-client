@@ -77,7 +77,8 @@ export default defineComponent({
     const title = bg.isUpdate ? "編集" : "登録";
 
     const selected = (e: { originalEvent: Event; files: File[] }) => {
-      console.log("select", e);
+      if (!e.files.length) return;
+      bg.file = e.files[0];
     };
 
     return {

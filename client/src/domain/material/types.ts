@@ -17,5 +17,6 @@ interface StoreInfo {
 type StoreBase = MaterialSite & UploadUser & StoreInfo
 export type Material = {
   name: string;
+  url: string;
   tags: string;
 } & StoreBase;
