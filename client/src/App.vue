@@ -24,4 +24,12 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style lang="scss">
+body {
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+}
+a {
+  color: var(--text-color);
+}
+</style>
