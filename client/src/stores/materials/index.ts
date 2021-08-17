@@ -2,9 +2,8 @@ import { inject, InjectionKey, reactive } from 'vue';
 import { useAuthStore } from '../auth';
 import { Material, MaterialRepository } from '@/domain/material/types';
 import { emptyTimeStamp } from '@/domain/firebase';
-import * as backgroundRepository from '@/domain/material/background-images/repository';
+import { backgroundImagesRepository, bgmRepository } from '@/domain/material/repository';
 import client from '../../api/client';
-import { createBackgroundImageUrl } from '@/domain/material';
 import { putBackgroundImage } from '@/api/material';
 import { getExtension } from '@/domain/file';
 
@@ -82,7 +81,7 @@ export const bgmStoreKey: InjectionKey<MaterialStore> = Symbol('bgmStore');
 
 const useStore = (store: MaterialStore, repository: MaterialRepository) => {
   const { state } = useAuthStore();
-  const createBackgroundImage = async () => {
+  const upsertMaterial = async () => {
     const { uid } = state;
     const { id, name, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl, file } =
       store.material;
@@ -96,8 +95,8 @@ const useStore = (store: MaterialStore, repository: MaterialRepository) => {
     }
 
     const ext = getExtension(file.name);
-    await putBackgroundImage(client, uid, id, ext, file);
-    const url = createBackgroundImageUrl(uid, id, ext)
+    await repository.putFile(client, uid, id, ext, file);
+    const url = repository.createUrl(uid, id, ext)
     const material = { id, name, url, uid, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl }
 
     const merge = store.material.isUpdate ? repository.update : repository.create;
@@ -105,20 +104,20 @@ const useStore = (store: MaterialStore, repository: MaterialRepository) => {
     store.closeModal();
   };
 
-  return { ...store, createBackgroundImage, state };
+  return { ...store, upsertMaterial, state };
 }
 export const useBackgrounImageStore = () => {
   const store = inject(backgroundImageStoreKey);
   if (!store) {
     throw new Error(`${backgroundImageStoreKey} is not provided`);
   }
-  return useStore(store, backgroundRepository);
+  return useStore(store, backgroundImagesRepository);
 };
-export const useBgnStore = (key: any) => {
+export const useBgmStore = () => {
   const store = inject(bgmStoreKey);
   if (!store) {
     throw new Error(`${bgmStoreKey} is not provided`);
   }
-  // TODO: backgroundRepositoryを入れ替え
-  return useStore(store, backgroundRepository);
+
+  return useStore(store, bgmRepository);
 };

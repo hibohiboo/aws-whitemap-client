@@ -4,22 +4,37 @@
     v-if="state.isLoggedin"
     label="背景素材追加"
     icon="pi pi-external-link"
-    @click="openCreateModal"
+    @click="openBGCreateModal"
+  />
+  <Button
+    v-if="state.isLoggedin"
+    label="BGM素材追加"
+    icon="pi pi-external-link"
+    @click="openBGMCreateModal"
   />
   <Button
     v-if="state.isLoggedin"
     label="編集"
     icon="pi pi-external-link"
-    @click="() => openEditModal('QGsdcK6dYrfmIPf3R3CL')"
+    @click="() => openBGEditModal('QGsdcK6dYrfmIPf3R3CL')"
   />
+  <Button
+    v-if="state.isLoggedin"
+    label="bgm編集"
+    icon="pi pi-external-link"
+    @click="() => openBGMEditModal('oUu5AeRO56LgC0qGvuFO')"
+  />
+
   <BackgroundImageInputDialog />
+  <BgmInputDialog />
 </template>
 
 <script lang="ts">
 import { ref, defineComponent, computed } from "vue";
 import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
+import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
 import { useAuthStore } from "@/stores/auth";
-import { useBackgrounImageStore } from "@/stores/materials";
+import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
 import Button from "primevue/button";
 import Tag from "primevue/tag";
 import InputText from "primevue/inputtext";
@@ -28,6 +43,7 @@ import Dialog from "primevue/dialog";
 export default defineComponent({
   components: {
     BackgroundImageInputDialog,
+    BgmInputDialog,
     Button,
     Tag,
     InputText,
@@ -39,7 +55,8 @@ export default defineComponent({
     const q = ref(query || "");
 
     const { signin, state } = useAuthStore();
-    const { openCreateModal, openEditModal } = useBackgrounImageStore();
+    const bgImageStore = useBackgrounImageStore();
+    const bgmStore = useBgmStore();
     signin();
 
     const removeEmptyName = (materials: { name: string; url: string }[]) =>
@@ -51,8 +68,10 @@ export default defineComponent({
       )}`; // tweetの画面で1回デコードされるので、tweetの画面でもエンコードされた文字列であるように2回エンコードする
     const createTags = (tags: string) => tags.split(" ").filter((i) => !!i);
     return {
-      openCreateModal,
-      openEditModal,
+      openBGCreateModal: bgImageStore.openCreateModal,
+      openBGEditModal: bgImageStore.openEditModal,
+      openBGMCreateModal: bgmStore.openCreateModal,
+      openBGMEditModal: bgmStore.openEditModal,
       state,
       q,
       removeEmptyName,

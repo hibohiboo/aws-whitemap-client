@@ -18,14 +18,14 @@
       <FileUpload
         name="backgroundImage"
         accept="image/*"
-        :max-file-size="1000000"
+        :max-file-size="2000000"
         choose-label="画像を選択してください"
         :show-upload-button="false"
         :show-cancel-button="false"
         @select="selected"
       >
         <template #empty>
-          <p>ここに画像をドラッグアンドドロップ</p>
+          <p>ここに画像をドラッグアンドドロップ(最大2MByte)</p>
         </template>
       </FileUpload>
       <h5>タグ</h5>
@@ -50,7 +50,7 @@
       <Button
         label="登録"
         icon="pi pi-check"
-        @click="createBackgroundImage"
+        @click="upsertMaterial"
         autofocus
       />
     </template>
@@ -72,7 +72,7 @@ export default defineComponent({
   name: "BackgroundInputDialog",
 
   setup: () => {
-    const { material, state, createBackgroundImage, closeModal } =
+    const { material, state, upsertMaterial, closeModal } =
       useBackgrounImageStore();
     const title = material.isUpdate ? "編集" : "登録";
 
@@ -86,7 +86,7 @@ export default defineComponent({
       title,
       material,
       state,
-      createBackgroundImage,
+      upsertMaterial,
       selected,
     };
   },

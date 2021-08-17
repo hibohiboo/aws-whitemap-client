@@ -1,4 +1,5 @@
-import { TimeStamp } from "../firebase/types";
+import type { AxiosInstance, AxiosResponse } from "axios";
+import type { TimeStamp } from "../firebase/types";
 
 interface MaterialSite {
   materialSiteName: string;
@@ -27,4 +28,6 @@ export interface MaterialRepository {
   getId: () => Promise<string>
   getItems: () => Promise<Material[]>
   getItemById: (id: string) => Promise<Material>
+  createUrl: (uid: string, id: string, ext: string) => string
+  putFile: (client: AxiosInstance, uid: string, id: string, ext: string, file: File) => Promise<AxiosResponse<any>>
 }
