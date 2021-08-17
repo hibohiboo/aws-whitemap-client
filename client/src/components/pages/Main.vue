@@ -6,6 +6,12 @@
     icon="pi pi-external-link"
     @click="openCreateModal"
   />
+  <Button
+    v-if="state.isLoggedin"
+    label="編集"
+    icon="pi pi-external-link"
+    @click="() => openEditModal('QGsdcK6dYrfmIPf3R3CL')"
+  />
   <BackgroundImageInputDialog />
 </template>
 

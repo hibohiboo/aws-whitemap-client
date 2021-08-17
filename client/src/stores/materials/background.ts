@@ -2,7 +2,8 @@ import { inject, InjectionKey, reactive } from 'vue';
 import { useAuthStore } from '../auth';
 import { Material } from '@/domain/material/types';
 import { emptyTimeStamp } from '@/domain/firebase';
-import { create, getId } from '@/domain/material/background-images/repository';
+import { create, getId, getItemById, update } from '@/domain/material/background-images/repository';
+
 
 interface ModalDialog {
   displayModal: boolean
@@ -39,7 +40,8 @@ const backgroundImageStore = () => {
     material.isUpdate = false;
     material.tags = '背景';
   };
-  const openEditModal = async (m: Material) => {
+  const openEditModal = async (id: string) => {
+    const m: Material = await getItemById(id);
     material.name = m.name;
     material.id = m.id;
     material.materialSiteName = m.materialSiteName;
@@ -76,16 +78,15 @@ export const useBackgrounImageStore = () => {
   }
   const { state } = useAuthStore();
   const createBackgroundImage = async () => {
-    const { id, name, tags, materialSiteName, materialSiteUrl, licenseName, licenseUrl } =
+    const { id, name, } =
       store.bg;
-    const bg = { id, name, tags, materialSiteName, materialSiteUrl, licenseName, licenseUrl };
     if (!name) {
       alert('名前は必須です');
       return;
     }
-    await create(id, { ...store.bg }, state.uid);
+    const merge = store.bg.isUpdate ? update : create;
+    await merge(id, { ...store.bg }, state.uid);
     store.closeModal();
-    location.reload();
   };
 
   return { ...store, createBackgroundImage, state };

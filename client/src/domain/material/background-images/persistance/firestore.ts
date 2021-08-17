@@ -4,6 +4,11 @@ import type { Material } from '../../types';
 
 const collectionBackgroundImages = () => db.collection('background-images')
 
+const convertFirebaseDocToSerializableObject = (data: any, id: string) => {
+  if (!data) throw new Error('create failed data is empty');
+  return { ...data, id, createdAt: toSerializeObject(data.createdAt), updatedAt: toSerializeObject(data.updatedAt) };
+}
+
 const merge = async (id: string, item: Material, uid: string, createdAt?: TimeStamp) => {
   const list = collectionBackgroundImages();
 
@@ -16,9 +21,7 @@ const merge = async (id: string, item: Material, uid: string, createdAt?: TimeSt
     }),
   ]);
   const newRef = await list.doc(id).get();
-  const newItem = newRef.data();
-  if (!newItem) throw new Error('create failed newItem is empty');
-  return { ...newItem, id, createdAt: toSerializeObject(newItem.createdAt) };
+  return convertFirebaseDocToSerializableObject(newRef.data(), id);
 }
 
 export const create = async (id: string, item: Material, uid: string) => {
@@ -40,4 +43,10 @@ export const getBackgroundImages = async () => {
     .get();
 
   return list.docs.map((doc) => doc.data()) as Material[];
+};
+export const getItemById = async (id: string) => {
+  const list = collectionBackgroundImages();
+
+  const doc = await list.doc(id).get();
+  return convertFirebaseDocToSerializableObject(doc.data(), id);
 };
