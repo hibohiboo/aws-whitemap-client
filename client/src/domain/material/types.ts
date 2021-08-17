@@ -20,3 +20,11 @@ export type Material = {
   url: string;
   tags: string;
 } & StoreBase;
+
+export interface MaterialRepository {
+  update: (id: string, item: Material, uid: string) => Promise<string>
+  create: (id: string, item: Material, uid: string) => Promise<string>
+  getId: () => Promise<string>
+  getItems: () => Promise<Material[]>
+  getItemById: (id: string) => Promise<Material>
+}

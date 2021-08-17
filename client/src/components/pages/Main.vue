@@ -17,9 +17,9 @@
 
 <script lang="ts">
 import { ref, defineComponent, computed } from "vue";
-import BackgroundImageInputDialog from "@/components/organisms/BackgroundImageInputDialog.vue";
+import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
 import { useAuthStore } from "@/stores/auth";
-import { useBackgrounImageStore } from "@/stores/materials/background";
+import { useBackgrounImageStore } from "@/stores/materials";
 import Button from "primevue/button";
 import Tag from "primevue/tag";
 import InputText from "primevue/inputtext";

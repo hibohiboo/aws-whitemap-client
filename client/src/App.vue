@@ -1,5 +1,8 @@
 <template>
   <Main />
+  <img
+    src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.png"
+  />
 </template>
 
 <script lang="ts">
