@@ -1,5 +1,6 @@
 <template>
   <h1></h1>
+  <BGGridBox style="width: 100vw; height: 100vh" />
   <Button
     v-if="state.isLoggedin"
     label="背景素材追加"
@@ -39,7 +40,7 @@ import Button from "primevue/button";
 import Tag from "primevue/tag";
 import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
-
+import BGGridBox from "../atoms/BGGridBox.vue";
 export default defineComponent({
   components: {
     BackgroundImageInputDialog,
@@ -48,6 +49,7 @@ export default defineComponent({
     Tag,
     InputText,
     Dialog,
+    BGGridBox,
   },
   name: "Main",
   setup: () => {
