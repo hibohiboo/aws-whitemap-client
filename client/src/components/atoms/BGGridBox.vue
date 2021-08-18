@@ -1,5 +1,5 @@
 <template>
-  <div class="grid-wrapper"><slot /></div>
+  <div :class="{ 'grid-wrapper': false }"><slot /></div>
 </template>
 
 <script lang="ts">

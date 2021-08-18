@@ -1,5 +1,5 @@
 import type { AxiosInstance, AxiosResponse } from "axios";
-import type { TimeStamp } from "../firebase/types";
+import type { StoreBase, TimeStamp } from "../firebase/types";
 
 interface MaterialSite {
   materialSiteName: string;
@@ -7,20 +7,13 @@ interface MaterialSite {
   licenseName: string;
   licenseUrl: string;
 }
-interface UploadUser {
-  uid: string;
-}
-interface StoreInfo {
-  id: string;
-  updatedAt: TimeStamp;
-  createdAt: TimeStamp;
-}
-type StoreBase = MaterialSite & UploadUser & StoreInfo
+
+type MaterialBase = MaterialSite & StoreBase
 export type Material = {
   name: string;
   url: string;
   tags: string;
-} & StoreBase;
+} & MaterialBase;
 
 export interface MaterialRepository {
   update: (id: string, item: Material, uid: string) => Promise<string>

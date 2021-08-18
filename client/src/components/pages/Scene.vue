@@ -1,61 +1,68 @@
 <template>
-  <BGGridBox style="width: 100vw; height: 100vh">
-    <h1>シーン</h1>
-    <img
-      src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.png"
-      width="800"
-      height="600"
-    />
-    <audio
-      controls
-      autoplay
-      loop
-      src="https://d29r5tmujsb0y1.cloudfront.net/data/bgms/W8NO28NuAQgRsiZAYYMNmQ29O2z2/oUu5AeRO56LgC0qGvuFO.mp3"
-    >
-      Your browser does not support the
-      <code>audio</code> element.
-    </audio>
-    <Button
-      v-if="state.isLoggedin"
-      label="背景素材追加"
-      icon="pi pi-external-link"
-      @click="openBGCreateModal"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="BGM素材追加"
-      icon="pi pi-external-link"
-      @click="openBGMCreateModal"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="編集"
-      icon="pi pi-external-link"
-      @click="() => openBGEditModal('QGsdcK6dYrfmIPf3R3CL')"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="bgm編集"
-      icon="pi pi-external-link"
-      @click="() => openBGMEditModal('oUu5AeRO56LgC0qGvuFO')"
-    />
-  </BGGridBox>
-
-  <BackgroundImageInputDialog />
-  <BgmInputDialog />
+  <div class="wrapper">
+    <div class="left-area"></div>
+    <div class="main-area">
+      <h1>{{ scenario.title }}</h1>
+      <img
+        src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.jpg"
+        width="800"
+        height="600"
+      />
+      <div class="flex justify-content-between">
+        <div>
+          <Button label="前のシーン" icon="pi pi-caret-left" class="hidden" />
+        </div>
+        <div>
+          <Button
+            label="次のシーン"
+            icon="pi pi-caret-right"
+            class="flex m-2"
+            iconPos="right"
+          />
+          <Button
+            label="次のシーン"
+            icon="pi pi-caret-right"
+            class="flex m-2"
+            iconPos="right"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="right-area">
+      <h2>シーン情報</h2>
+      <div>
+        <Button
+          label="次のシーンを追加"
+          icon="pi pi-plus"
+          class="flex m-2"
+          @click="openModal"
+        />
+      </div>
+      <audio
+        controls
+        loop
+        src="https://d29r5tmujsb0y1.cloudfront.net/data/bgms/W8NO28NuAQgRsiZAYYMNmQ29O2z2/oUu5AeRO56LgC0qGvuFO.mp3"
+      >
+        Your browser does not support the
+        <code>audio</code> element.
+      </audio>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed } from "vue";
+import { ref, defineComponent, computed, reactive } from "vue";
 import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
 import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
 import { useAuthStore } from "@/stores/auth";
-import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
+import { useSceneStore } from "@/stores/scenes";
 import Button from "primevue/button";
 import Tag from "primevue/tag";
 import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import BGGridBox from "../atoms/BGGridBox.vue";
+import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
+
 export default defineComponent({
   components: {
     BackgroundImageInputDialog,
@@ -68,79 +75,32 @@ export default defineComponent({
   },
   name: "Main",
   setup: () => {
-    const query = decodeURI(location.search).replace("?", "");
-    const q = ref(query || "");
-
-    const { signin, state } = useAuthStore();
-    const bgImageStore = useBackgrounImageStore();
-    const bgmStore = useBgmStore();
-    signin();
-
-    const removeEmptyName = (materials: { name: string; url: string }[]) =>
-      materials.filter((i) => !!i.name);
-
-    const createTweet = (roomId: string, uid: string, title: string) =>
-      `https://twitter.com/intent/tweet?url=https://az-php-app.azurewebsites.net/room/${uid}/${roomId}?${encodeURI(
-        encodeURI(title),
-      )}`; // tweetの画面で1回デコードされるので、tweetの画面でもエンコードされた文字列であるように2回エンコードする
-    const createTags = (tags: string) => tags.split(" ").filter((i) => !!i);
-    return {
-      openBGCreateModal: bgImageStore.openCreateModal,
-      openBGEditModal: bgImageStore.openEditModal,
-      openBGMCreateModal: bgmStore.openCreateModal,
-      openBGMEditModal: bgmStore.openEditModal,
-      state,
-      q,
-      removeEmptyName,
-      createTags,
-      createTweet,
+    const scenario = reactive({
+      id: GLOBAL_SCENARIO_ID,
+      title: "白地図と足跡",
+      firstSceneId: "",
+    });
+    const sceneStore = useSceneStore();
+    const openModal = () => {
+      console.log("open");
+      sceneStore.openCreateModal(GLOBAL_SCENARIO_ID);
     };
+    return { scenario, openModal };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.custom-skeleton {
-  border: 1px solid var(--surface-d);
-  border-radius: 4px;
-
-  ul {
-    list-style: none;
-  }
+.wrapper {
+  display: flex;
 }
-.product-item {
-  .product-item-content {
-    border: 1px solid var(--surface-d);
-    border-radius: 3px;
-    margin: 0.3rem;
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .product-image {
-    width: 50%;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  }
-  .product-badge {
-    margin: 10px;
-  }
-  .product-tags {
-    padding-bottom: 10px;
-    cursor: pointer;
-  }
-  .product-table {
-    display: flex;
-    justify-content: center;
-    margin: 10px;
-    table {
-      border: solid 2px #000;
-      border-collapse: collapse;
-      td,
-      th {
-        border: solid 1px #000;
-        padding: 5px;
-      }
-    }
-  }
+.left-area {
+  width: 100px;
+}
+.main-area {
+  width: 800px;
+}
+.right-area {
+  padding: 10px;
 }
 </style>

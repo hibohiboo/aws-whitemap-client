@@ -1,32 +1,34 @@
 <template>
-  <BGGridBox style="width: 100vw; height: 100vh">
-    <router-view></router-view>
-    <Button
-      v-if="state.isLoggedin"
-      label="背景素材追加"
-      icon="pi pi-external-link"
-      @click="openBGCreateModal"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="BGM素材追加"
-      icon="pi pi-external-link"
-      @click="openBGMCreateModal"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="編集"
-      icon="pi pi-external-link"
-      @click="() => openBGEditModal('QGsdcK6dYrfmIPf3R3CL')"
-    />
-    <Button
-      v-if="state.isLoggedin"
-      label="bgm編集"
-      icon="pi pi-external-link"
-      @click="() => openBGMEditModal('oUu5AeRO56LgC0qGvuFO')"
-    />
+  <BGGridBox class="outer-wrapper">
+    <div class="outer-main-area"><router-view></router-view></div>
+    <div class="outer-edit-area">
+      <Button
+        v-if="state.isLoggedin"
+        label="背景素材追加"
+        icon="pi pi-external-link"
+        @click="openBGCreateModal"
+      />
+      <Button
+        v-if="state.isLoggedin"
+        label="BGM素材追加"
+        icon="pi pi-external-link"
+        @click="openBGMCreateModal"
+      />
+      <Button
+        v-if="state.isLoggedin"
+        label="背景素材編集"
+        icon="pi pi-external-link"
+        @click="() => openBGEditModal('QGsdcK6dYrfmIPf3R3CL')"
+      />
+      <Button
+        v-if="state.isLoggedin"
+        label="BGM素材編集"
+        icon="pi pi-external-link"
+        @click="() => openBGMEditModal('oUu5AeRO56LgC0qGvuFO')"
+      />
+    </div>
   </BGGridBox>
-
+  <SceneInputDialog />
   <BackgroundImageInputDialog />
   <BgmInputDialog />
 </template>
@@ -35,6 +37,7 @@
 import { ref, defineComponent, computed } from "vue";
 import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
 import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
+import SceneInputDialog from "@/components/organisms/material/SceneInputDialog.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
 import Button from "primevue/button";
@@ -42,10 +45,12 @@ import Tag from "primevue/tag";
 import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import BGGridBox from "../../atoms/BGGridBox.vue";
+
 export default defineComponent({
   components: {
     BackgroundImageInputDialog,
     BgmInputDialog,
+    SceneInputDialog,
     Button,
     Tag,
     InputText,
@@ -60,6 +65,7 @@ export default defineComponent({
     const { signin, state } = useAuthStore();
     const bgImageStore = useBackgrounImageStore();
     const bgmStore = useBgmStore();
+
     signin();
 
     const removeEmptyName = (materials: { name: string; url: string }[]) =>
@@ -86,47 +92,21 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.custom-skeleton {
-  border: 1px solid var(--surface-d);
-  border-radius: 4px;
+$editWidth: 250px;
 
-  ul {
-    list-style: none;
-  }
+.outer-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  position: relative;
 }
-.product-item {
-  .product-item-content {
-    border: 1px solid var(--surface-d);
-    border-radius: 3px;
-    margin: 0.3rem;
-    text-align: center;
-    padding: 2rem 0;
-  }
-
-  .product-image {
-    width: 50%;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  }
-  .product-badge {
-    margin: 10px;
-  }
-  .product-tags {
-    padding-bottom: 10px;
-    cursor: pointer;
-  }
-  .product-table {
-    display: flex;
-    justify-content: center;
-    margin: 10px;
-    table {
-      border: solid 2px #000;
-      border-collapse: collapse;
-      td,
-      th {
-        border: solid 1px #000;
-        padding: 5px;
-      }
-    }
-  }
+.outer-main-area {
+  border: solid 1px #fff;
+  width: calc(100% - #{$editWidth});
+}
+.outer-edit-area {
+  padding: 10px;
+  width: $editWidth;
+  border: solid 1px #fff;
 }
 </style>
