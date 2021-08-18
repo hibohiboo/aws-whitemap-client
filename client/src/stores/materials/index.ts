@@ -13,26 +13,27 @@ interface ModalDialog {
   file: File | null
 }
 
-const initMaterialInputDialog: ModalDialog & Material = {
-  name: '',
-  url: '',
-  id: '',
-  uid: '',
-  tags: '',
-  createdAt: emptyTimeStamp,
-  updatedAt: emptyTimeStamp,
-  materialSiteName: '',
-  materialSiteUrl: '',
-  licenseName: '',
-  licenseUrl: '',
-
-  displayModal: false,
-  isUpdate: false,
-  file: null
-};
 
 
 const materialStore = (defaultTag: string, repository: MaterialRepository) => {
+  const initMaterialInputDialog: ModalDialog & Material = {
+    name: '',
+    url: '',
+    id: '',
+    uid: '',
+    tags: '',
+    createdAt: emptyTimeStamp,
+    updatedAt: emptyTimeStamp,
+    materialSiteName: '',
+    materialSiteUrl: '',
+    licenseName: '',
+    licenseUrl: '',
+
+    displayModal: false,
+    isUpdate: false,
+    file: null
+  };
+
   const material = reactive(initMaterialInputDialog);
 
   const openCreateModal = async () => {
@@ -106,6 +107,7 @@ const useStore = (store: MaterialStore, repository: MaterialRepository) => {
 
   return { ...store, upsertMaterial, state };
 }
+
 export const useBackgrounImageStore = () => {
   const store = inject(backgroundImageStoreKey);
   if (!store) {
