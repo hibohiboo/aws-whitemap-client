@@ -1,7 +1,7 @@
 <template>
   <BGGridBox class="outer-wrapper">
     <div class="outer-main-area"><router-view></router-view></div>
-    <div class="outer-edit-area">
+    <div class="outer-edit-area hidden">
       <Button
         v-if="state.isLoggedin"
         label="背景素材追加"
@@ -105,8 +105,8 @@ $editWidth: 250px;
   position: relative;
 }
 .outer-main-area {
-  border: solid 1px #fff;
-  width: calc(100% - #{$editWidth});
+  // border: solid 1px #fff;
+  // width: calc(100% - #{$editWidth});
 }
 .outer-edit-area {
   padding: 10px;

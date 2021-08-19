@@ -4,12 +4,12 @@
     <div class="main-area">
       <h1>{{ scenario.title }}</h1>
       <div class="scene-area">
+        <div class="scene-title">{{ scene.title }}</div>
         <img
           src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.jpg"
           width="800"
-          height="600"
         />
-        <div class="scene-title">{{ scene.title }}</div>
+        />
       </div>
       <div class="flex justify-content-between">
         <div>
@@ -112,29 +112,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3",
   "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
-.wrapper {
-  display: flex;
-}
-.left-area {
-  width: 100px;
-}
 .main-area {
-  width: 800px;
-}
-.right-area {
-  padding: 10px;
-}
-.next-button {
-  font-family: $mincho;
-  font-weight: bold;
-  font-size: 1.3rem;
+  position: relative;
 }
 .scene- {
   &area {
-    width: 800px;
-    height: 600px;
     img {
-      position: absolute;
+      width: 100%;
     }
   }
   &title {
@@ -146,6 +130,33 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
     margin: 10px;
     padding: 5px 10px;
     background-color: var(--surface-ground);
+  }
+}
+.next-button {
+  font-family: $mincho;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+@media screen and (min-width: 800px) {
+  .wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .left-area {
+    width: 100px;
+  }
+  .main-area {
+    width: 800px;
+  }
+  .right-area {
+    padding: 10px;
+  }
+
+  .scene- {
+    &area {
+      width: 800px;
+      height: 600px;
+    }
   }
 }
 </style>
