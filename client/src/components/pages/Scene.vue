@@ -3,11 +3,14 @@
     <div class="left-area"></div>
     <div class="main-area">
       <h1>{{ scenario.title }}</h1>
-      <img
-        src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.jpg"
-        width="800"
-        height="600"
-      />
+      <div class="scene-area">
+        <img
+          src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.jpg"
+          width="800"
+          height="600"
+        />
+        <div class="scene-title">{{ scene.title }}</div>
+      </div>
       <div class="flex justify-content-between">
         <div>
           <Button label="前のシーン" icon="pi pi-caret-left" class="hidden" />
@@ -16,7 +19,7 @@
           <Button
             label="次のシーン"
             icon="pi pi-caret-right"
-            class="flex m-2"
+            class="flex m-2 next-button"
             iconPos="right"
           />
           <Button
@@ -36,6 +39,12 @@
           icon="pi pi-plus"
           class="flex m-2"
           @click="openModal"
+        />
+        <Button
+          label="このシーンを編集"
+          icon="pi pi-pencil"
+          class="flex m-2"
+          @click="editModal"
         />
       </div>
       <audio
@@ -62,6 +71,7 @@ import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import BGGridBox from "../atoms/BGGridBox.vue";
 import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   components: {
@@ -75,22 +85,33 @@ export default defineComponent({
   },
   name: "Main",
   setup: () => {
+    const route = useRoute();
     const scenario = reactive({
       id: GLOBAL_SCENARIO_ID,
       title: "白地図と足跡",
       firstSceneId: "",
     });
+    const { id } = route.params;
     const sceneStore = useSceneStore();
+    if (!id || typeof id !== "string") {
+      location.href = "/whitemap/";
+      return;
+    }
+    sceneStore.fetchScene(id);
     const openModal = () => {
-      console.log("open");
       sceneStore.openCreateModal(GLOBAL_SCENARIO_ID);
     };
-    return { scenario, openModal };
+    const editModal = () => {
+      sceneStore.openEditModal({ ...sceneStore.scene });
+    };
+    return { scenario, openModal, editModal, scene: sceneStore.scene };
   },
 });
 </script>
 
 <style lang="scss" scoped>
+$mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3",
+  "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
 .wrapper {
   display: flex;
 }
@@ -102,5 +123,29 @@ export default defineComponent({
 }
 .right-area {
   padding: 10px;
+}
+.next-button {
+  font-family: $mincho;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+.scene- {
+  &area {
+    width: 800px;
+    height: 600px;
+    img {
+      position: absolute;
+    }
+  }
+  &title {
+    font-family: $mincho;
+    font-size: 1.3rem;
+
+    line-height: 1.5;
+    position: absolute;
+    margin: 10px;
+    padding: 5px 10px;
+    background-color: var(--surface-ground);
+  }
 }
 </style>

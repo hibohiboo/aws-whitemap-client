@@ -12,7 +12,7 @@ interface ModalDialog {
 
 
 const materialStore = (repository: SceneRepository) => {
-  const initInputDialog: ModalDialog & Scene = {
+  const initScene: Scene = {
     id: '',
     uid: '',
     scenarioId: '',
@@ -22,24 +22,18 @@ const materialStore = (repository: SceneRepository) => {
     nexts: [],
     bg: null,
     bgm: null,
+  }
+  const initInputDialog: ModalDialog & Scene = {
+    ...initScene,
 
     displayModal: false,
     isUpdate: false,
   };
 
-  const scene = reactive(initInputDialog);
+  const sceneDialog = reactive(initInputDialog);
+  const scene = reactive(initScene);
 
-  const openCreateModal = async (scenarioId: string) => {
-    scene.id = await repository.getId();
-    scene.title = '';
-    scene.scenarioId = scenarioId;
-    scene.bgm = null;
-    scene.bg = null;
-    scene.displayModal = true;
-    scene.isUpdate = false;
-    console.log('display', scene)
-  };
-  const openEditModal = async (id: string) => {
+  const fetchScene = async (id: string) => {
     const item: Scene = await repository.getItemById(id);
     scene.title = item.title;
     scene.id = item.id;
@@ -49,18 +43,40 @@ const materialStore = (repository: SceneRepository) => {
     scene.updatedAt = item.updatedAt;
     scene.bg = item.bg;
     scene.bgm = item.bgm;
-    scene.displayModal = true;
-    scene.isUpdate = true;
+  }
+
+  const openCreateModal = async (scenarioId: string) => {
+    sceneDialog.id = await repository.getId();
+    sceneDialog.title = '';
+    sceneDialog.scenarioId = scenarioId;
+    sceneDialog.bgm = null;
+    sceneDialog.bg = null;
+    sceneDialog.displayModal = true;
+    sceneDialog.isUpdate = false;
+  };
+  const openEditModal = async (item: Scene) => {
+    sceneDialog.title = item.title;
+    sceneDialog.id = item.id;
+    sceneDialog.scenarioId = item.scenarioId;
+    sceneDialog.uid = item.uid;
+    sceneDialog.createdAt = item.createdAt;
+    sceneDialog.updatedAt = item.updatedAt;
+    sceneDialog.bg = item.bg;
+    sceneDialog.bgm = item.bgm;
+    sceneDialog.displayModal = true;
+    sceneDialog.isUpdate = true;
   };
   const closeModal = () => {
-    scene.displayModal = false;
+    sceneDialog.displayModal = false;
   };
 
   return {
     scene,
+    sceneDialog,
     openCreateModal,
     closeModal,
     openEditModal,
+    fetchScene
   };
 };
 export default materialStore;

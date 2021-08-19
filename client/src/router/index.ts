@@ -7,7 +7,7 @@ const routes = [
     component: import('../components/pages/Top.vue')
   },
   {
-    path: '/scene',
+    path: '/scene/:id',
     name: 'Scene',
     component: () => import('../components/pages/Scene.vue')
   }
