@@ -14,12 +14,20 @@
       <h5>タイトル※必須</h5>
       <InputText type="text" v-model="sceneDialog.title" />
       <h5>画像</h5>
-      <Button
-        label="画像を選択"
-        icon="pi pi-pencil"
-        class="flex m-2"
-        @click="openListModal"
-      />
+      <div>
+        <Button
+          label="画像を選択"
+          icon="pi pi-pencil"
+          class="m-2"
+          @click="openListModal"
+        />
+        <img
+          v-if="sceneDialog.bg"
+          :src="sceneDialog.bg.url"
+          :alt="sceneDialog.bg.name"
+          width="200"
+        />
+      </div>
     </div>
     <template #footer>
       <Button

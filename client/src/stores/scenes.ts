@@ -3,6 +3,7 @@ import { useAuthStore } from './auth';
 import { Scene, SceneRepository } from '@/domain/scene/types';
 import { emptyTimeStamp } from '@/domain/firebase';
 import { sceneRepository } from '@/domain/scene/repository';
+import { Material } from '@/domain/material/types';
 
 interface ModalDialog {
   displayModal: boolean
@@ -70,13 +71,18 @@ const materialStore = (repository: SceneRepository) => {
     sceneDialog.displayModal = false;
   };
 
+  const updateBgImage = (data: Material) => {
+    sceneDialog.bg = { ...data };
+  }
+
   return {
     scene,
     sceneDialog,
     openCreateModal,
     closeModal,
     openEditModal,
-    fetchScene
+    fetchScene,
+    updateBgImage
   };
 };
 export default materialStore;
