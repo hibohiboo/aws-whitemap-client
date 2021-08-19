@@ -11,21 +11,26 @@
     :minY="0"
   >
     <div>
-      <Toolbar class="p-mb-4">
-        <template #left>
-          <Button
-            label="新規追加"
-            icon="pi pi-plus"
-            class="p-button-success p-mr-2"
-            @click="openCreateModal"
-          />
-        </template>
-      </Toolbar>
       <DataTable
         :value="list"
         responsiveLayout="scroll"
         @row-click="selectData"
+        v-model:filters="filters"
       >
+        <template #header>
+          <div class="flex justify-content-between">
+            <Button
+              label="新規追加"
+              icon="pi pi-plus"
+              class="p-button-success mr-2"
+              @click="openCreateModal"
+            />
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText v-model="filters['global'].value" placeholder="検索" />
+            </span>
+          </div>
+        </template>
         <Column field="name" header="名前"></Column>
         <Column field="url" header="">
           <template #body="slotProps">
@@ -42,8 +47,9 @@
             <Tag
               v-for="(t, i) in data.tags.split(' ')"
               :key="`${t}${i}`"
-              :class="'m-1'"
+              :class="'m-1 cursor-pointer'"
               :value="t"
+              @click="(e) => updateFilter(t, e)"
             />
           </template>
         </Column>
@@ -99,6 +105,7 @@ import { useAuthStore } from "@/stores/auth";
 import Toolbar from "primevue/toolbar";
 import type { Material } from "@/domain/material/types";
 import { useSceneStore } from "@/stores/scenes";
+import { FilterMatchMode } from "primevue/api";
 
 export default defineComponent({
   components: { Dialog, Button, InputText, DataTable, Column, Toolbar, Tag },
@@ -134,6 +141,14 @@ export default defineComponent({
       sceneStore.updateBgImage(event.data);
       materialList.displayModal = false;
     };
+    const filters = reactive({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
+    const updateFilter = (tag: string, e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      filters.global.value = tag as any;
+    };
     return {
       materialList,
       closeListModal,
@@ -143,6 +158,8 @@ export default defineComponent({
       openCreateModal,
       editMode,
       selectData,
+      filters,
+      updateFilter,
     };
   },
 });
