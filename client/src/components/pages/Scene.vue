@@ -14,6 +14,15 @@
             >{{ scene.bg.materialSiteName }}</a
           >
         </div>
+        <div class="scene-bgm-name">
+          <div>♪{{ scene.bgm.name }}</div>
+          <a
+            class="scene-bgm-site"
+            :href="scene.bgm.materialSiteUrl"
+            target="_blank"
+            >{{ scene.bgm.materialSiteName }}</a
+          >
+        </div>
         <img :src="scene.bg.url" width="800" />
       </div>
       <div class="flex justify-content-between">
@@ -74,12 +83,30 @@
           </td>
         </tr>
       </table>
-      <audio
-        controls
-        loop
-        style="width: 100%"
-        src="https://d29r5tmujsb0y1.cloudfront.net/data/bgms/W8NO28NuAQgRsiZAYYMNmQ29O2z2/oUu5AeRO56LgC0qGvuFO.mp3"
-      >
+
+      <table v-if="scene.bgm">
+        <tr>
+          <th>BGM</th>
+          <td>{{ scene.bgm.name }}</td>
+        </tr>
+        <tr>
+          <th>素材サイト</th>
+          <td>
+            <a :href="scene.bgm.materialSiteUrl" target="_blank">{{
+              scene.bgm.materialSiteName
+            }}</a>
+          </td>
+        </tr>
+        <tr>
+          <th>利用規約</th>
+          <td>
+            <a :href="scene.bgm.licenseUrl" target="_blank">{{
+              scene.bgm.licenseName
+            }}</a>
+          </td>
+        </tr>
+      </table>
+      <audio controls loop autoplay style="width: 100%" :src="scene.bgm.url">
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -132,6 +159,7 @@ export default defineComponent({
     const editModal = () => {
       sceneStore.openEditModal({ ...sceneStore.scene });
     };
+    console.error(sceneStore.scene);
     return { scenario, openModal, editModal, scene: sceneStore.scene };
   },
 });
@@ -159,21 +187,12 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
     padding: 5px 10px;
     background-color: var(--surface-ground);
   }
-  &img-name {
-    z-index: 1;
-    font-size: 1.3rem;
 
-    line-height: 1.5;
-    position: absolute;
-    top: 600px;
-    margin: 10px;
-    padding: 5px 10px;
-    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
-      -1px -1px 0 #000;
-    a {
-      text-decoration: none;
-      font-size: 1rem;
-    }
+  &img-name {
+    display: none;
+  }
+  &bgm-name {
+    display: none;
   }
 }
 .next-button {
@@ -196,10 +215,50 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
     padding: 10px;
   }
 
-  .scene-area {
-    width: 800px;
-    height: 600px;
-    overflow: hidden;
+  .scene- {
+    &area {
+      width: 800px;
+      height: 600px;
+      overflow: hidden;
+    }
+    &img-name {
+      display: block;
+      z-index: 1;
+      font-size: 1.3rem;
+
+      line-height: 1.5;
+      position: absolute;
+      top: 600px;
+      margin: 10px;
+      padding: 5px 10px;
+      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
+        -1px -1px 0 #000;
+      a {
+        text-decoration: none;
+        font-size: 1rem;
+      }
+    }
+    &bgm-name {
+      display: block;
+      text-align: right;
+      z-index: 1;
+      font-size: 1.3rem;
+
+      line-height: 1.5;
+      position: absolute;
+      white-space: nowrap;
+      top: 600px;
+      left: 290px;
+      width: 500px;
+      margin: 10px;
+      padding: 5px 10px;
+      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
+        -1px -1px 0 #000;
+      a {
+        text-decoration: none;
+        font-size: 1rem;
+      }
+    }
   }
 }
 </style>

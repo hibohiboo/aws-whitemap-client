@@ -4,7 +4,6 @@ import { Material, MaterialRepository } from '@/domain/material/types';
 import { emptyTimeStamp } from '@/domain/firebase';
 import { backgroundImagesRepository, bgmRepository } from '@/domain/material/repository';
 import client from '../../api/client';
-import { putBackgroundImage } from '@/api/material';
 import { getExtension } from '@/domain/file';
 
 interface ModalDialog {

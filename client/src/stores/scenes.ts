@@ -75,6 +75,10 @@ const materialStore = (repository: SceneRepository) => {
     const { uid, updatedAt, createdAt, id, url, name, materialSiteUrl, materialSiteName, licenseUrl, licenseName, tags } = data;
     sceneDialog.bg = { uid, updatedAt, createdAt, id, name, tags, url, materialSiteUrl, materialSiteName, licenseUrl, licenseName };
   }
+  const updateBgm = (data: Material) => {
+    const { uid, updatedAt, createdAt, id, url, name, materialSiteUrl, materialSiteName, licenseUrl, licenseName, tags } = data;
+    sceneDialog.bgm = { uid, updatedAt, createdAt, id, name, tags, url, materialSiteUrl, materialSiteName, licenseUrl, licenseName };
+  }
   const setScene = (item: Scene) => {
     scene.title = item.title;
     scene.id = item.id;
@@ -94,6 +98,7 @@ const materialStore = (repository: SceneRepository) => {
     openEditModal,
     fetchScene,
     updateBgImage,
+    updateBgm,
     setScene
   };
 };

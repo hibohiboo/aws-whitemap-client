@@ -19,7 +19,7 @@
           label="画像を選択"
           icon="pi pi-pencil"
           class="m-2"
-          @click="openListModal"
+          @click="bgStore.openListModal"
         />
         <img
           v-if="sceneDialog.bg"
@@ -27,6 +27,16 @@
           :alt="sceneDialog.bg.name"
           width="200"
         />
+      </div>
+      <h5>BGM</h5>
+      <div class="flex align-items-center">
+        <Button
+          label="BGMを選択"
+          icon="pi pi-pencil"
+          class="m-2"
+          @click="bgmStore.openListModal"
+        />
+        <span v-if="sceneDialog.bgm">{{ sceneDialog.bgm.name }}</span>
       </div>
     </div>
     <template #footer>
@@ -48,7 +58,7 @@ import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import { useSceneStore } from "@/stores/scenes";
 import FileUpload from "primevue/fileupload";
-import { useBackgrounImageStore } from "@/stores/materials";
+import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
 // Diralog の draggable、keepInViewPort、minX、minYについては型では必須となっているが、実装ではデフォルト値がある。デフォルト値を設定。
 
 export default defineComponent({
@@ -57,7 +67,8 @@ export default defineComponent({
 
   setup: () => {
     const { sceneDialog, state, upsert, closeModal } = useSceneStore();
-    const { openListModal } = useBackgrounImageStore();
+    const bgStore = useBackgrounImageStore();
+    const bgmStore = useBgmStore();
     const title = computed(() =>
       sceneDialog.isUpdate ? "編集" : "新しいシーンを登録",
     );
@@ -68,7 +79,8 @@ export default defineComponent({
       sceneDialog,
       state,
       upsert,
-      openListModal,
+      bgStore,
+      bgmStore,
     };
   },
 });

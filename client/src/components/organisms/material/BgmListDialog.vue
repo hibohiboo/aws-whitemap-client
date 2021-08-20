@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    header="背景画像一覧"
+    header="BGM一覧"
     :modal="true"
     v-model:visible="materialList.displayModal"
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
@@ -34,12 +34,10 @@
         <Column field="name" header="名前"></Column>
         <Column field="url" header="">
           <template #body="slotProps">
-            <img
-              :src="slotProps.data.url"
-              :alt="slotProps.data.name"
-              width="200"
-              loading="lazy"
-            />
+            <audio controls loop :src="slotProps.data.url">
+              Your browser does not support the
+              <code>audio</code> element.
+            </audio>
           </template>
         </Column>
         <Column field="tags" header="タグ">
@@ -100,7 +98,7 @@ import { defineComponent, reactive, ref, watch, watchEffect } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import { useBackgrounImageStore } from "@/stores/materials";
+import { useBgmStore } from "@/stores/materials";
 
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -114,7 +112,7 @@ import { FilterMatchMode } from "primevue/api";
 
 export default defineComponent({
   components: { Dialog, Button, InputText, DataTable, Column, Toolbar, Tag },
-  name: "BgListDialog",
+  name: "BgmListDialog",
 
   setup: () => {
     const sceneStore = useSceneStore();
@@ -125,7 +123,7 @@ export default defineComponent({
       fetchList,
       openEditModal,
       openCreateModal,
-    } = useBackgrounImageStore();
+    } = useBgmStore();
     const list = ref([]) as any;
     const editMode = true;
 
@@ -143,7 +141,7 @@ export default defineComponent({
       // console.log("selectData", event);
       // if (editMode) return;
 
-      sceneStore.updateBgImage(event.data);
+      sceneStore.updateBgm(event.data);
       materialList.displayModal = false;
     };
     const filters = reactive({
