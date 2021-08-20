@@ -5,7 +5,7 @@
       <h1>{{ scenario.title }}</h1>
       <div class="scene-area">
         <div class="scene-title">{{ scene.title }}</div>
-        <div class="scene-img-name">
+        <div class="scene-img-name" v-if="scene.bg">
           <div>{{ scene.bg.name }}</div>
           <a
             class="scene-img-site"
@@ -14,7 +14,7 @@
             >{{ scene.bg.materialSiteName }}</a
           >
         </div>
-        <div class="scene-bgm-name">
+        <div class="scene-bgm-name" v-if="scene.bgm">
           <div>♪{{ scene.bgm.name }}</div>
           <a
             class="scene-bgm-site"
@@ -23,7 +23,7 @@
             >{{ scene.bgm.materialSiteName }}</a
           >
         </div>
-        <img :src="scene.bg.url" width="800" />
+        <img v-if="scene.bg" :src="scene.bg.url" width="800" />
       </div>
       <div class="flex justify-content-between">
         <div>
@@ -61,7 +61,7 @@
           @click="editModal"
         />
       </div>
-      <table>
+      <table v-if="scene.bg">
         <tr>
           <th>画像</th>
           <td>{{ scene.bg.name }}</td>
@@ -106,7 +106,14 @@
           </td>
         </tr>
       </table>
-      <audio controls loop autoplay style="width: 100%" :src="scene.bgm.url">
+      <audio
+        controls
+        loop
+        autoplay
+        style="width: 100%"
+        :src="scene.bgm.url"
+        v-if="scene.bgm"
+      >
         Your browser does not support the
         <code>audio</code> element.
       </audio>
@@ -154,12 +161,12 @@ export default defineComponent({
     }
     sceneStore.fetchScene(id);
     const openModal = () => {
-      sceneStore.openCreateModal(GLOBAL_SCENARIO_ID);
+      sceneStore.openCreateModal(GLOBAL_SCENARIO_ID, id);
     };
     const editModal = () => {
       sceneStore.openEditModal({ ...sceneStore.scene });
     };
-    console.error(sceneStore.scene);
+
     return { scenario, openModal, editModal, scene: sceneStore.scene };
   },
 });

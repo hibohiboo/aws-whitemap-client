@@ -10,7 +10,7 @@ export type Scene = {
 } & StoreBase;
 
 export interface SceneRepository {
-  upsert: (id: string, item: Scene, uid: string, isUpdate: boolean) => Promise<string>
+  upsert: (id: string, item: Scene, uid: string, isUpdate: boolean, parentId: string) => Promise<string>
   getId: () => Promise<string>
   getItemById: (id: string) => Promise<Scene>
 }

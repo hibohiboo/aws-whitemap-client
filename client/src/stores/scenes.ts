@@ -8,6 +8,7 @@ import { Material } from '@/domain/material/types';
 interface ModalDialog {
   displayModal: boolean
   isUpdate: boolean
+  parentId: string;
 }
 
 
@@ -26,7 +27,7 @@ const materialStore = (repository: SceneRepository) => {
   }
   const initInputDialog: ModalDialog & Scene = {
     ...initScene,
-
+    parentId: '',
     displayModal: false,
     isUpdate: false,
   };
@@ -46,7 +47,7 @@ const materialStore = (repository: SceneRepository) => {
     scene.bgm = item.bgm;
   }
 
-  const openCreateModal = async (scenarioId: string) => {
+  const openCreateModal = async (scenarioId: string, parentId: string) => {
     sceneDialog.id = await repository.getId();
     sceneDialog.title = '';
     sceneDialog.scenarioId = scenarioId;
@@ -54,6 +55,7 @@ const materialStore = (repository: SceneRepository) => {
     sceneDialog.bg = null;
     sceneDialog.displayModal = true;
     sceneDialog.isUpdate = false;
+    sceneDialog.parentId = parentId;
   };
   const openEditModal = async (item: Scene) => {
     sceneDialog.title = item.title;
@@ -111,7 +113,7 @@ export const sceneStoreKey: InjectionKey<SceneStore> = Symbol('sceneStore');
 
 const useStore = (store: SceneStore, repository: SceneRepository) => {
   const { state } = useAuthStore();
-  const upsert = async () => {
+  const upsert = async (parentId: string) => {
     const { id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt, isUpdate } =
       store.sceneDialog;
     const uid = isUpdate ? store.scene.uid : state.uid
@@ -121,7 +123,7 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
     }
 
     const scene = { uid: store.scene.uid, id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt };
-    await repository.upsert(id, scene, uid, isUpdate);
+    await repository.upsert(id, scene, uid, isUpdate, store.sceneDialog.parentId);
 
     store.closeModal();
     store.setScene(scene)

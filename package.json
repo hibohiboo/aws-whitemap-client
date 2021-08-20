@@ -9,6 +9,7 @@
     "upload-server": "cd public &&  php -S localhost:8080"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^1.22.1",
     "axios": "^0.21.1",
     "firebase": "^8.9.1",
     "primeicons": "^4.1.0",
