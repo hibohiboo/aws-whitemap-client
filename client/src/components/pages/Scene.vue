@@ -5,6 +5,15 @@
       <h1>{{ scenario.title }}</h1>
       <div class="scene-area">
         <div class="scene-title">{{ scene.title }}</div>
+        <div class="scene-img-name">
+          <div>{{ scene.bg.name }}</div>
+          <a
+            class="scene-img-site"
+            :href="scene.bg.materialSiteUrl"
+            target="_blank"
+            >{{ scene.bg.materialSiteName }}</a
+          >
+        </div>
         <img :src="scene.bg.url" width="800" />
       </div>
       <div class="flex justify-content-between">
@@ -43,9 +52,32 @@
           @click="editModal"
         />
       </div>
+      <table>
+        <tr>
+          <th>画像</th>
+          <td>{{ scene.bg.name }}</td>
+        </tr>
+        <tr>
+          <th>素材サイト</th>
+          <td>
+            <a :href="scene.bg.materialSiteUrl" target="_blank">{{
+              scene.bg.materialSiteName
+            }}</a>
+          </td>
+        </tr>
+        <tr>
+          <th>利用規約</th>
+          <td>
+            <a :href="scene.bg.licenseUrl" target="_blank">{{
+              scene.bg.licenseName
+            }}</a>
+          </td>
+        </tr>
+      </table>
       <audio
         controls
         loop
+        style="width: 100%"
         src="https://d29r5tmujsb0y1.cloudfront.net/data/bgms/W8NO28NuAQgRsiZAYYMNmQ29O2z2/oUu5AeRO56LgC0qGvuFO.mp3"
       >
         Your browser does not support the
@@ -127,6 +159,22 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
     padding: 5px 10px;
     background-color: var(--surface-ground);
   }
+  &img-name {
+    z-index: 1;
+    font-size: 1.3rem;
+
+    line-height: 1.5;
+    position: absolute;
+    top: 600px;
+    margin: 10px;
+    padding: 5px 10px;
+    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
+      -1px -1px 0 #000;
+    a {
+      text-decoration: none;
+      font-size: 1rem;
+    }
+  }
 }
 .next-button {
   font-family: $mincho;
@@ -148,11 +196,10 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
     padding: 10px;
   }
 
-  .scene- {
-    &area {
-      width: 800px;
-      height: 600px;
-    }
+  .scene-area {
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
   }
 }
 </style>
