@@ -5,11 +5,7 @@
       <h1>{{ scenario.title }}</h1>
       <div class="scene-area">
         <div class="scene-title">{{ scene.title }}</div>
-        <img
-          src="https://d29r5tmujsb0y1.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/QGsdcK6dYrfmIPf3R3CL.jpg"
-          width="800"
-        />
-        />
+        <img :src="scene.bg.url" width="800" />
       </div>
       <div class="flex justify-content-between">
         <div>

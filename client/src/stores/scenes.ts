@@ -72,7 +72,18 @@ const materialStore = (repository: SceneRepository) => {
   };
 
   const updateBgImage = (data: Material) => {
-    sceneDialog.bg = { ...data };
+    const { uid, updatedAt, createdAt, id, url, name, materialSiteUrl, materialSiteName, licenseUrl, licenseName, tags } = data;
+    sceneDialog.bg = { uid, updatedAt, createdAt, id, name, tags, url, materialSiteUrl, materialSiteName, licenseUrl, licenseName };
+  }
+  const setScene = (item: Scene) => {
+    scene.title = item.title;
+    scene.id = item.id;
+    scene.scenarioId = item.scenarioId;
+    scene.uid = item.uid;
+    scene.createdAt = item.createdAt;
+    scene.updatedAt = item.updatedAt;
+    scene.bg = item.bg;
+    scene.bgm = item.bgm;
   }
 
   return {
@@ -82,7 +93,8 @@ const materialStore = (repository: SceneRepository) => {
     closeModal,
     openEditModal,
     fetchScene,
-    updateBgImage
+    updateBgImage,
+    setScene
   };
 };
 export default materialStore;
@@ -96,7 +108,7 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
   const { state } = useAuthStore();
   const upsert = async () => {
     const { id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt, isUpdate } =
-      store.scene;
+      store.sceneDialog;
     const uid = isUpdate ? store.scene.uid : state.uid
     if (!title) {
       alert('タイトルは必須です');
@@ -107,6 +119,7 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
     await repository.upsert(id, scene, uid, isUpdate);
 
     store.closeModal();
+    store.setScene(scene)
   };
 
   return { ...store, upsert, state };

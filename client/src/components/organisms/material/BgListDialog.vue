@@ -73,7 +73,12 @@
               v-if="state.uid === slotProps.data.uid"
               label="編集"
               icon="pi pi-external-link"
-              @click="() => openEditModal(slotProps.data.id)"
+              @click="
+                () => {
+                  openEditModal(slotProps.data.id);
+                  materialList.displayModal = false;
+                }
+              "
             />
           </template>
         </Column>
@@ -122,7 +127,7 @@ export default defineComponent({
       openCreateModal,
     } = useBackgrounImageStore();
     const list = ref([]) as any;
-    const editMode = false;
+    const editMode = true;
 
     const fetch = async () => {
       list.value = await fetchList();
@@ -135,8 +140,8 @@ export default defineComponent({
     fetch();
 
     const selectData = (event: { data: Material }) => {
-      console.log("selectData", event);
-      if (editMode) return;
+      // console.log("selectData", event);
+      // if (editMode) return;
 
       sceneStore.updateBgImage(event.data);
       materialList.displayModal = false;
