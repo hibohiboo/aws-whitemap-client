@@ -106,16 +106,7 @@
           </td>
         </tr>
       </table>
-      <embed
-        :src="scene.bgm.url"
-        v-if="scene.bgm && scene.bgm.url.includes('.mid')"
-        type="audio/midi"
-        width="150"
-        height="40"
-        autostart="true"
-        loop="true"
-        repeat="true"
-      />
+
       <JukeBox :auto="true" :src="scene.bgm.url" v-if="scene.bgm" />
     </div>
   </div>
