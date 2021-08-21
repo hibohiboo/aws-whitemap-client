@@ -25,7 +25,6 @@
 import { computed, defineComponent, toRef, toRefs } from "vue";
 import MidiPlayer from "midi-player-js";
 import Soundfont from "soundfont-player";
-
 const ac = new AudioContext();
 const instrument = await Soundfont.instrument(ac, "acoustic_grand_piano");
 const Player = new MidiPlayer.Player((event: any) => {
@@ -35,15 +34,14 @@ const Player = new MidiPlayer.Player((event: any) => {
     });
   }
 });
-
 const playMidi = async (url: string) => {
   const file = await fetch(url, { method: "GET", mode: "cors" });
   if (!file) return;
   const buffer = await file.arrayBuffer();
 
   // Load a MIDI file
-  Player.loadArrayBuffer(buffer);
-  Player.play();
+  await Player.loadArrayBuffer(buffer);
+  Player.playLoop();
 };
 
 export default defineComponent({
