@@ -24,12 +24,22 @@
 <script lang="ts">
 import { computed, defineComponent, toRef, toRefs } from "vue";
 import MidiPlayer from "midi-player-js";
+import Soundfont from "soundfont-player";
+
+const ac = new AudioContext();
+const instrument = await Soundfont.instrument(ac, "acoustic_grand_piano");
+const Player = new MidiPlayer.Player((event: any) => {
+  if (event.name == "Note on") {
+    instrument.play(event.noteName, ac.currentTime, {
+      gain: event.velocity / 100,
+    });
+  }
+});
 
 const playMidi = async (url: string) => {
   const file = await fetch(url, { method: "GET", mode: "cors" });
   if (!file) return;
   const buffer = await file.arrayBuffer();
-  const Player = new MidiPlayer.Player((event: any) => console.log(event));
 
   // Load a MIDI file
   Player.loadArrayBuffer(buffer);
