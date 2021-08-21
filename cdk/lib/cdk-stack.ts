@@ -47,13 +47,15 @@ export class AWSWhiteMapClientStack extends core.Stack {
   private createPolicy(bucket: s3.Bucket, identity: cf.OriginAccessIdentity) {
     const myBucketPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
-      actions: ['s3:GetObject'],
+      actions: ['s3:GetObject',
+        "s3:ListBucket"],
       principals: [
         new iam.CanonicalUserPrincipal(
           identity.cloudFrontOriginAccessIdentityS3CanonicalUserId,
         ),
       ],
-      resources: [bucket.bucketArn + '/*'],
+      resources: [bucket.bucketArn + '/*',
+      bucket.bucketArn],
     })
     bucket.addToResourcePolicy(myBucketPolicy)
   }
@@ -65,7 +67,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
     return new cf.CloudFrontWebDistribution(this, 'Distribution', {
       // enableIpV6: true,
       // httpVersion: cf.HttpVersion.HTTP2,
-      // defaultRootObject: '/index.html',
+      defaultRootObject: '/index.html',
       viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       priceClass: cf.PriceClass.PRICE_CLASS_200,
       originConfigs: [
@@ -87,6 +89,20 @@ export class AWSWhiteMapClientStack extends core.Stack {
               },
             },
           ],
+        },
+      ],
+      errorConfigurations: [
+        {
+          errorCode: 403,
+          responsePagePath: "/index.html",
+          responseCode: 200,
+          errorCachingMinTtl: 0,
+        },
+        {
+          errorCode: 404,
+          responsePagePath: "/whitemap/index.html",
+          responseCode: 200,
+          errorCachingMinTtl: 0,
         },
       ],
     })

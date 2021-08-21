@@ -106,17 +106,17 @@
           </td>
         </tr>
       </table>
-      <audio
-        controls
-        loop
-        autoplay
-        style="width: 100%"
+      <embed
         :src="scene.bgm.url"
-        v-if="scene.bgm"
-      >
-        Your browser does not support the
-        <code>audio</code> element.
-      </audio>
+        v-if="scene.bgm && scene.bgm.url.includes('.mid')"
+        type="audio/midi"
+        width="150"
+        height="40"
+        autostart="true"
+        loop="true"
+        repeat="true"
+      />
+      <JukeBox :auto="true" :src="scene.bgm.url" v-if="scene.bgm" />
     </div>
   </div>
 </template>
@@ -134,10 +134,12 @@ import Dialog from "primevue/dialog";
 import BGGridBox from "../atoms/BGGridBox.vue";
 import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
 import { useRoute } from "vue-router";
+import JukeBox from "@/components/atoms/JukeBox.vue";
 
 export default defineComponent({
   components: {
     BackgroundImageInputDialog,
+    JukeBox,
     BgmInputDialog,
     Button,
     Tag,
