@@ -116,7 +116,7 @@
         loop="true"
         repeat="true"
       />
-      <JukeBox :auto="true" :src="'/gear.mid'" v-if="scene.bgm" />
+      <JukeBox :auto="true" :src="scene.bgm.url" v-if="scene.bgm" />
     </div>
   </div>
 </template>
