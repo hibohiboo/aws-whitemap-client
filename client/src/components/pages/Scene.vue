@@ -166,12 +166,13 @@ export default defineComponent({
       title: "白地図と足跡",
       firstSceneId: "",
     });
-    const { id } = route.params;
-    const sceneStore = useSceneStore();
-    if (!id || typeof id !== "string") {
+
+    if (!route.params.id || typeof route.params.id !== "string") {
       location.href = "/whitemap/";
       return;
     }
+    const id = ref(route.params.id);
+    const sceneStore = useSceneStore();
     const asiatoList = ref(asiatoRepository.getList());
 
     const updateAsiatoList = async () => {
@@ -184,7 +185,7 @@ export default defineComponent({
     };
 
     const openModal = () => {
-      sceneStore.openCreateModal(GLOBAL_SCENARIO_ID, id);
+      sceneStore.openCreateModal(GLOBAL_SCENARIO_ID, id.value);
     };
     const editModal = () => {
       sceneStore.openEditModal({ ...sceneStore.scene });
@@ -197,9 +198,10 @@ export default defineComponent({
       }
 
       sceneStore.fetchScene(to.params.id).then(updateAsiatoList);
+      id.value = to.params.id;
     });
 
-    sceneStore.fetchScene(id).then(updateAsiatoList);
+    sceneStore.fetchScene(id.value).then(updateAsiatoList);
     const history = computed(() =>
       asiatoList.value.map((a) => ({
         name: a.scene_name,
@@ -225,6 +227,9 @@ export default defineComponent({
 <style lang="scss" scoped>
 $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3",
   "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+
+$hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+
 .main-area {
   position: relative;
 }
@@ -236,7 +241,9 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
   }
   &title {
     font-family: $mincho;
-    font-size: 1.3rem;
+    font-size: 1.6rem;
+
+    text-shadow: $hutidori;
 
     line-height: 1.5;
     position: absolute;
@@ -288,8 +295,7 @@ $mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 P
       top: 600px;
       margin: 10px;
       padding: 5px 10px;
-      text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000,
-        -1px -1px 0 #000;
+      text-shadow: $hutidori;
       a {
         text-decoration: none;
         font-size: 1rem;
