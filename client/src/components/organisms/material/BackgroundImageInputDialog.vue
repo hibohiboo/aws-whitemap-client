@@ -19,6 +19,7 @@
         name="backgroundImage"
         accept="image/*"
         :max-file-size="2000000"
+        :fileLimit="1"
         choose-label="画像を選択してください"
         :show-upload-button="false"
         :show-cancel-button="false"

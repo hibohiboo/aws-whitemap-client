@@ -19,6 +19,7 @@
         name="bgm"
         accept="audio/*"
         :max-file-size="5000000"
+        :fileLimit="1"
         choose-label="音楽を選択してください"
         :show-upload-button="false"
         :show-cancel-button="false"
