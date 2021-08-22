@@ -59,6 +59,7 @@
           icon="pi pi-pencil"
           class="flex m-2"
           @click="editModal"
+          v-if="state.uid === scene.uid"
         />
       </div>
       <table v-if="scene.bg">
@@ -145,6 +146,7 @@ export default defineComponent({
   name: "Main",
   setup: () => {
     const route = useRoute();
+    const { state } = useAuthStore();
     const scenario = reactive({
       id: GLOBAL_SCENARIO_ID,
       title: "白地図と足跡",
@@ -173,7 +175,7 @@ export default defineComponent({
       sceneStore.fetchScene(to.params.id);
     });
     sceneStore.fetchScene(id);
-    return { scenario, openModal, editModal, scene: sceneStore.scene };
+    return { scenario, openModal, editModal, scene: sceneStore.scene, state };
   },
 });
 </script>
