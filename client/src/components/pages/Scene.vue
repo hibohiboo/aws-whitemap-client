@@ -114,7 +114,7 @@
         :src="scene.bgm.url"
       />
       <div>
-        <h5>足跡</h5>
+        <h3><i class="fas fa-shoe-prints" /> 足跡</h3>
         <div v-for="asiato in history" :key="asiato.created_at">
           <router-link :to="`/scene/${asiato.id}`" class="no-underline"
             >{{ asiato.name }}
