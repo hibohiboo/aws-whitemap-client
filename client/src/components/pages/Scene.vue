@@ -23,7 +23,14 @@
             >{{ scene.bgm.materialSiteName }}</a
           >
         </div>
-        <img v-if="scene.bg" :src="scene.bg.url" width="800" />
+        <img
+          :src="
+            scene.bg && scene.bg.url
+              ? scene.bg.url
+              : '/whitemap/assets/images/black.png'
+          "
+          width="800"
+        />
       </div>
       <div class="flex justify-content-between">
         <div>
@@ -115,7 +122,7 @@
       />
       <div>
         <h3><i class="fas fa-shoe-prints" /> 足跡</h3>
-        <div v-for="asiato in history" :key="asiato.created_at">
+        <div v-for="asiato in history" :key="asiato.created_at" class="m-3">
           <router-link :to="`/scene/${asiato.id}`" class="no-underline"
             >{{ asiato.name }}
             <span style="font-size: 0.6rem">{{
@@ -241,7 +248,7 @@ $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
   }
   &title {
     font-family: $mincho;
-    font-size: 1.6rem;
+    font-size: 1rem;
 
     text-shadow: $hutidori;
 
@@ -262,7 +269,7 @@ $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
 .next-button {
   font-family: $mincho;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1rem;
 }
 @media screen and (min-width: 800px) {
   .wrapper {
@@ -280,6 +287,9 @@ $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
   }
 
   .scene- {
+    &title {
+      font-size: 1.6rem;
+    }
     &area {
       width: 800px;
       height: 600px;
@@ -322,6 +332,9 @@ $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
         font-size: 1rem;
       }
     }
+  }
+  .next-button {
+    font-size: 1.3rem;
   }
 }
 </style>
