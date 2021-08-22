@@ -16,7 +16,13 @@
       <h5>画像</h5>
       <div>
         <Button
-          label="画像を選択"
+          label="画像をアップロード"
+          icon="pi pi-pencil"
+          class="m-2"
+          @click="openBgDireactModal"
+        />
+        <Button
+          label="画像を一覧から選択"
           icon="pi pi-pencil"
           class="m-2"
           @click="bgStore.openListModal"
@@ -72,6 +78,9 @@ export default defineComponent({
     const title = computed(() =>
       sceneDialog.isUpdate ? "編集" : "新しいシーンを登録",
     );
+    const openBgDireactModal = () => {
+      bgStore.openDirectModal(sceneDialog.id, sceneDialog.title);
+    };
 
     return {
       closeModal,
@@ -81,6 +90,7 @@ export default defineComponent({
       upsert,
       bgStore,
       bgmStore,
+      openBgDireactModal,
     };
   },
 });

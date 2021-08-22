@@ -33,6 +33,7 @@
   <BgmInputDialog />
   <BgListDialog />
   <BgmListDialog />
+  <BgDirectInputDialog />
 </template>
 
 <script lang="ts">
@@ -42,6 +43,7 @@ import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
 import SceneInputDialog from "@/components/organisms/material/SceneInputDialog.vue";
 import BgListDialog from "@/components/organisms/material/BgListDialog.vue";
 import BgmListDialog from "@/components/organisms/material/BgmListDialog.vue";
+import BgDirectInputDialog from "@/components/organisms/material/BgDirectInputDialog.vue";
 
 import { useAuthStore } from "@/stores/auth";
 import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
@@ -58,6 +60,7 @@ export default defineComponent({
     SceneInputDialog,
     BgListDialog,
     BgmListDialog,
+    BgDirectInputDialog,
     Button,
     Tag,
     InputText,
