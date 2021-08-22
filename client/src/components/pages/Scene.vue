@@ -109,10 +109,21 @@
       </table>
 
       <JukeBox
+        v-if="scene.bgm && scene.bgm.url"
         :auto="true"
         :src="scene.bgm.url"
-        v-if="scene.bgm && scene.bgm.url"
       />
+      <div>
+        <h5>足跡</h5>
+        <div v-for="asiato in history" :key="asiato.created_at">
+          <router-link :to="`/scene/${asiato.id}`" class="no-underline"
+            >{{ asiato.name }}
+            <span style="font-size: 0.6rem">{{
+              asiato.created_at
+            }}</span></router-link
+          >
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -131,6 +142,9 @@ import BGGridBox from "../atoms/BGGridBox.vue";
 import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import JukeBox from "@/components/atoms/JukeBox.vue";
+import { asiatoRepository } from "@/domain/asiato/repository";
+import format from "date-fns/format";
+import addHours from "date-fns/addHours";
 
 export default defineComponent({
   components: {
@@ -158,6 +172,16 @@ export default defineComponent({
       location.href = "/whitemap/";
       return;
     }
+    const asiatoList = ref(asiatoRepository.getList());
+
+    const updateAsiatoList = async () => {
+      asiatoList.value = await asiatoRepository.insert(
+        asiatoList.value,
+        sceneStore.scene.uid,
+        sceneStore.scene.id,
+        sceneStore.scene.title,
+      );
+    };
 
     const openModal = () => {
       sceneStore.openCreateModal(GLOBAL_SCENARIO_ID, id);
@@ -172,10 +196,28 @@ export default defineComponent({
         return;
       }
 
-      sceneStore.fetchScene(to.params.id);
+      sceneStore.fetchScene(to.params.id).then(updateAsiatoList);
     });
-    sceneStore.fetchScene(id);
-    return { scenario, openModal, editModal, scene: sceneStore.scene, state };
+
+    sceneStore.fetchScene(id).then(updateAsiatoList);
+    const history = computed(() =>
+      asiatoList.value.map((a) => ({
+        name: a.scene_name,
+        id: a.scene_id,
+        created_at: format(
+          addHours(new Date(a.created_at), 9),
+          "yyyy-MM-dd HH:mm:ss",
+        ),
+      })),
+    );
+    return {
+      scenario,
+      openModal,
+      editModal,
+      scene: sceneStore.scene,
+      state,
+      history,
+    };
   },
 });
 </script>
