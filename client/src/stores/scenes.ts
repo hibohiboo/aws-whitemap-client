@@ -20,6 +20,7 @@ const materialStore = (repository: SceneRepository) => {
     uid: '',
     scenarioId: '',
     title: '',
+    titleRuby: '',
     createdAt: emptyTimeStamp,
     updatedAt: emptyTimeStamp,
     nexts: [],
@@ -39,6 +40,7 @@ const materialStore = (repository: SceneRepository) => {
   const fetchScene = async (id: string) => {
     const item: Scene = await repository.getItemById(id);
     scene.title = item.title;
+    scene.titleRuby = item.titleRuby;
     scene.id = item.id;
     scene.scenarioId = item.scenarioId;
     scene.uid = item.uid;
@@ -52,6 +54,7 @@ const materialStore = (repository: SceneRepository) => {
   const openCreateModal = async (scenarioId: string, parentId: string) => {
     sceneDialog.id = await repository.getId();
     sceneDialog.title = '';
+    sceneDialog.titleRuby = '';
     sceneDialog.scenarioId = scenarioId;
     sceneDialog.bgm = null;
     sceneDialog.bg = null;
@@ -61,6 +64,7 @@ const materialStore = (repository: SceneRepository) => {
   };
   const openEditModal = async (item: Scene) => {
     sceneDialog.title = item.title;
+    sceneDialog.titleRuby = item.titleRuby;
     sceneDialog.id = item.id;
     sceneDialog.scenarioId = item.scenarioId;
     sceneDialog.uid = item.uid;
@@ -85,6 +89,7 @@ const materialStore = (repository: SceneRepository) => {
   }
   const setScene = (item: Scene) => {
     scene.title = item.title;
+    scene.titleRuby = item.titleRuby;
     scene.id = item.id;
     scene.scenarioId = item.scenarioId;
     scene.uid = item.uid;
@@ -117,7 +122,7 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
   const { state } = useAuthStore();
   const router = useRouter();
   const upsert = async (parentId: string) => {
-    const { id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt, isUpdate } =
+    const { id, title, titleRuby, scenarioId, nexts, bg, bgm, createdAt, updatedAt, isUpdate } =
       store.sceneDialog;
     const uid = isUpdate ? store.scene.uid : state.uid
     if (!title) {
@@ -125,7 +130,7 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
       return;
     }
 
-    const scene = { uid: store.scene.uid, id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt };
+    const scene = { uid: store.scene.uid, id, title, titleRuby, scenarioId, nexts, bg, bgm, createdAt, updatedAt };
     await repository.upsert(id, scene, uid, isUpdate, store.sceneDialog.parentId);
 
     store.closeModal();

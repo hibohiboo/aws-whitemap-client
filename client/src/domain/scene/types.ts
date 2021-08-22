@@ -4,6 +4,7 @@ import type { Material } from "../material/types";
 
 export type Scene = {
   title: string;
+  titleRuby: string;
   scenarioId: string
   nexts: ToScene[]
   bgm: Material | null // undefinedはfirebaseは許さない

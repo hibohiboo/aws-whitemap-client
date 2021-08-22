@@ -13,6 +13,8 @@
     <div>
       <h5>タイトル※必須</h5>
       <InputText type="text" v-model="sceneDialog.title" />
+      <h5>タイトルルビ</h5>
+      <InputText type="text" v-model="sceneDialog.titleRuby" />
       <h5>画像</h5>
       <div>
         <Button

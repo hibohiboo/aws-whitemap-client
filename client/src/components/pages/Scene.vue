@@ -4,7 +4,15 @@
     <div class="main-area">
       <h1>{{ scenario.title }}</h1>
       <div class="scene-area">
-        <div class="scene-title">{{ scene.title }}</div>
+        <div
+          class="scene-title"
+          :class="{ 'scene-title-with-ruby': !!scene.titleRuby }"
+        >
+          <ruby v-if="scene.titleRuby"
+            >{{ scene.title }}<rt>{{ scene.titleRuby }}</rt></ruby
+          >
+          <span v-if="!scene.titleRuby">{{ scene.title }}</span>
+        </div>
         <div class="scene-img-name" v-if="scene.bg">
           <div>{{ scene.bg.name }}</div>
           <a
@@ -255,8 +263,14 @@ $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
     line-height: 1.5;
     position: absolute;
     margin: 10px;
-    padding: 5px 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     background-color: var(--surface-ground);
+  }
+  &title-with-ruby {
+    padding-top: 20px;
   }
 
   &img-name {

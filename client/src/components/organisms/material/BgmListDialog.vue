@@ -19,12 +19,17 @@
       >
         <template #header>
           <div class="flex justify-content-between">
-            <Button
-              label="新規追加"
-              icon="pi pi-plus"
-              class="p-button-success mr-2"
-              @click="openCreateModal"
-            />
+            <div>
+              <Button
+                label="新規追加"
+                icon="pi pi-plus"
+                class="p-button-success mr-2"
+                @click="openCreateModal"
+              />
+              <a href="/whitemap/infos/agreement.html" target="_blank">
+                利用規約
+              </a>
+            </div>
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText v-model="filters['global'].value" placeholder="検索" />
