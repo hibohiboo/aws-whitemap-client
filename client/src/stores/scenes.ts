@@ -45,6 +45,7 @@ const materialStore = (repository: SceneRepository) => {
     scene.updatedAt = item.updatedAt;
     scene.bg = item.bg;
     scene.bgm = item.bgm;
+    scene.nexts = item.nexts
   }
 
   const openCreateModal = async (scenarioId: string, parentId: string) => {

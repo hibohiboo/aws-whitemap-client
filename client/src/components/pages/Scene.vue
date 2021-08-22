@@ -30,18 +30,18 @@
           <Button label="前のシーン" icon="pi pi-caret-left" class="hidden" />
         </div>
         <div>
-          <Button
-            label="次のシーン"
-            icon="pi pi-caret-right"
-            class="flex m-2 next-button"
-            iconPos="right"
-          />
-          <Button
-            label="次のシーン"
-            icon="pi pi-caret-right"
-            class="flex m-2"
-            iconPos="right"
-          />
+          <router-link
+            :to="`/scene/${item.to_id}`"
+            v-for="item in scene.nexts"
+            :key="item.to_id"
+            class="no-underline"
+          >
+            <Button
+              :label="item.to_name"
+              icon="pi pi-caret-right"
+              class="flex m-2 next-button"
+              iconPos="right"
+          /></router-link>
         </div>
       </div>
     </div>
@@ -107,7 +107,11 @@
         </tr>
       </table>
 
-      <JukeBox :auto="true" :src="scene.bgm.url" v-if="scene.bgm" />
+      <JukeBox
+        :auto="true"
+        :src="scene.bgm.url"
+        v-if="scene.bgm && scene.bgm.url"
+      />
     </div>
   </div>
 </template>
@@ -159,6 +163,7 @@ export default defineComponent({
     const editModal = () => {
       sceneStore.openEditModal({ ...sceneStore.scene });
     };
+    console.log("scene", sceneStore.scene);
 
     return { scenario, openModal, editModal, scene: sceneStore.scene };
   },

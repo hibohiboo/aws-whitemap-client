@@ -51,7 +51,7 @@ export default defineComponent({
     auto: Boolean,
   },
   setup: (props) => {
-    const isMidi = computed(() => props.src?.includes(".mid"));
+    const isMidi = computed(() => props.src && /\.mid$/.test(props.src));
     if (props.auto && isMidi && props.src) {
       playMidi(props.src);
     }

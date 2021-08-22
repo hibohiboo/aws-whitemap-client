@@ -1,5 +1,5 @@
 import { createRepository } from './persistance/firestore';
-import { insertSceneLink, updateSceneLink } from './persistance/supabase';
+import { insertSceneLink, selectSceneLink, updateSceneLink } from './persistance/supabase';
 import { SceneRepository, Scene } from './types';
 
 const repository = createRepository('scenes')
@@ -14,5 +14,11 @@ export const sceneRepository: SceneRepository = {
     return await merge(id, item, uid);
   },
   getId: () => repository.getId(),
-  getItemById: (id: string) => repository.getItemById(id),
+  getItemById: async (id: string) => {
+    const item = await repository.getItemById(id)
+    const nexts = await selectSceneLink(id)
+    return { ...item, nexts }
+  },
+
+
 }
