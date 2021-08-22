@@ -4,6 +4,7 @@ import { Scene, SceneRepository } from '@/domain/scene/types';
 import { emptyTimeStamp } from '@/domain/firebase';
 import { sceneRepository } from '@/domain/scene/repository';
 import { Material } from '@/domain/material/types';
+import { useRouter } from 'vue-router';
 
 interface ModalDialog {
   displayModal: boolean
@@ -114,6 +115,7 @@ export const sceneStoreKey: InjectionKey<SceneStore> = Symbol('sceneStore');
 
 const useStore = (store: SceneStore, repository: SceneRepository) => {
   const { state } = useAuthStore();
+  const router = useRouter();
   const upsert = async (parentId: string) => {
     const { id, title, scenarioId, nexts, bg, bgm, createdAt, updatedAt, isUpdate } =
       store.sceneDialog;
@@ -127,7 +129,8 @@ const useStore = (store: SceneStore, repository: SceneRepository) => {
     await repository.upsert(id, scene, uid, isUpdate, store.sceneDialog.parentId);
 
     store.closeModal();
-    store.setScene(scene)
+    store.setScene(scene);
+    router.push(`/scene/${id}`)
   };
 
   return { ...store, upsert, state };

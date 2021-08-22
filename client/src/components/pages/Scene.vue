@@ -128,7 +128,7 @@ import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import BGGridBox from "../atoms/BGGridBox.vue";
 import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
-import { useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import JukeBox from "@/components/atoms/JukeBox.vue";
 
 export default defineComponent({
@@ -156,15 +156,23 @@ export default defineComponent({
       location.href = "/whitemap/";
       return;
     }
-    sceneStore.fetchScene(id);
+
     const openModal = () => {
       sceneStore.openCreateModal(GLOBAL_SCENARIO_ID, id);
     };
     const editModal = () => {
       sceneStore.openEditModal({ ...sceneStore.scene });
     };
-    console.log("scene", sceneStore.scene);
+    onBeforeRouteUpdate((to, from) => {
+      console.log("scene", sceneStore.scene);
+      console.log("route", `to:${to}, from:${from}, id: ${id}`);
+      if (!to.params.id || typeof to.params.id !== "string") {
+        return;
+      }
 
+      sceneStore.fetchScene(to.params.id);
+    });
+    sceneStore.fetchScene(id);
     return { scenario, openModal, editModal, scene: sceneStore.scene };
   },
 });
