@@ -4,6 +4,7 @@ import * as cf from '@aws-cdk/aws-cloudfront'
 import * as iam from '@aws-cdk/aws-iam'
 import * as s3deploy from '@aws-cdk/aws-s3-deployment'
 import { basePath } from '../../vite.config'
+import * as lambda from "@aws-cdk/aws-lambda";
 interface Props extends core.StackProps {
   bucketName: string
 }
@@ -17,8 +18,10 @@ export class AWSWhiteMapClientStack extends core.Stack {
     const identity = this.createIdentity(bucket)
     // S3バケットポリシーで、CloudFrontのオリジンアクセスアイデンティティを許可
     this.createPolicy(bucket, identity)
+    // lambda edge作成
+    const f = this.createLambdaEdge()
     // CloudFrontディストリビューションを作成
-    const distribution = this.createCloudFront(bucket, identity)
+    const distribution = this.createCloudFront(bucket, identity, f)
     // 指定したディレクトリをデプロイ
     this.deployS3(bucket, distribution, '../dist')
 
@@ -39,6 +42,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
 
   private createIdentity(bucket: s3.Bucket) {
     const identity = new cf.OriginAccessIdentity(this, 'OriginAccessIdentity', {
+
       comment: `${bucket.bucketName} access identity`,
     })
     return identity
@@ -63,6 +67,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
   private createCloudFront(
     bucket: s3.Bucket,
     identity: cf.OriginAccessIdentity,
+    f: cf.experimental.EdgeFunction
   ) {
     return new cf.CloudFrontWebDistribution(this, 'Distribution', {
       // enableIpV6: true,
@@ -70,6 +75,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
       defaultRootObject: '/index.html',
       viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
       priceClass: cf.PriceClass.PRICE_CLASS_200,
+
       originConfigs: [
         {
           s3OriginSource: {
@@ -87,7 +93,18 @@ export class AWSWhiteMapClientStack extends core.Stack {
               forwardedValues: {
                 queryString: false,
               },
+
             },
+            {
+              pathPattern: 'whitemap/scene/*',
+              lambdaFunctionAssociations: [
+                {
+
+                  eventType: cf.LambdaEdgeEventType.VIEWER_REQUEST,
+                  lambdaFunction: f.currentVersion,
+                },
+              ],
+            }
           ],
         },
       ],
@@ -121,5 +138,14 @@ export class AWSWhiteMapClientStack extends core.Stack {
       distributionPaths: ['/*'],
       destinationKeyPrefix: basePath,
     })
+  }
+
+  private createLambdaEdge() {
+    const f = new cf.experimental.EdgeFunction(this, "lambda-edge", {
+      code: lambda.Code.fromAsset("src/ogp"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
+    });
+    return f;
   }
 }

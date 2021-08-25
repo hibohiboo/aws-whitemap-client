@@ -10,22 +10,22 @@
     "cdk": "cdk",
     "bundle": "cdk synth > cdk.out/template.yml",
     "pipeline-deploy": "cdk deploy --require-approval never",
-    "deploy": "cdk deploy --profile produser --require-approval never"
+    "deploy": "cdk deploy --profile produser --require-approval never --all"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.118.0",
-    "@types/node": "16.6.1",
-    "aws-cdk": "1.118.0",
+    "@aws-cdk/assert": "1.119.0",
+    "@types/node": "16.7.1",
+    "aws-cdk": "1.119.0",
     "npm-check-updates": "^11.8.3",
-    "ts-node": "^10.2.0",
+    "ts-node": "^10.2.1",
     "typescript": "~4.3.5"
   },
   "dependencies": {
-    "@aws-cdk/aws-cloudfront": "^1.118.0",
-    "@aws-cdk/aws-iam": "^1.118.0",
-    "@aws-cdk/aws-s3": "^1.118.0",
-    "@aws-cdk/aws-s3-deployment": "^1.118.0",
-    "@aws-cdk/core": "1.118.0",
+    "@aws-cdk/aws-cloudfront": "^1.119.0",
+    "@aws-cdk/aws-iam": "^1.119.0",
+    "@aws-cdk/aws-s3": "^1.119.0",
+    "@aws-cdk/aws-s3-deployment": "^1.119.0",
+    "@aws-cdk/core": "1.119.0",
     "source-map-support": "^0.5.19"
   }
 }
