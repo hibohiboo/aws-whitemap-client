@@ -43,6 +43,8 @@ const getHTML = (title, ogImage, url) => {
   <title>${title}｜${SERVICE_NAME}</title>
   <meta name="description" content="${DESCRIPTION}" />
   <meta property="og:url" content="https://${url}" />
+  <meta name="og:type" content="website" />
+  <meta name="keywords" content="TRPG,白地図と足跡,紙芝居" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ja_JP" />
   <meta property="og:title" content="${title}｜${SERVICE_NAME}" />
