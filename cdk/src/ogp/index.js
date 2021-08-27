@@ -1,5 +1,5 @@
 'use strict';
-const DOMAIN = 'd29r5tmujsb0y1.cloudfront.net';
+const DOMAIN = 'd1fffsi9eo19ed.cloudfront.net';
 const SERVICE_NAME = '白地図と足跡.test';
 const DESCRIPTION = '空白の地図。君の足跡。そして';
 
@@ -21,8 +21,8 @@ exports.handler = async (event, context, callback) => {
 
         const botResponse = {
             status: 200,
-            headers: [{ 'Content-Type': 'text/html' }],
-            body: getHTML(request.uri, 'https://d29r5tmujsb0y1.cloudfront.net/data/background-images/bdRCpKrNiGRXmviNTtWQ4pd9E413/ytwwDyXOwRg0BaSQRxQv.png', DOMAIN + request.uri)
+            headers:{'content-type': [{ value: 'text/html;charset=UTF-8' }]},
+            body: getHTML(request.uri, 'https://d1fffsi9eo19ed.cloudfront.net/data/background-images/bdRCpKrNiGRXmviNTtWQ4pd9E413/ytwwDyXOwRg0BaSQRxQv.png', DOMAIN + request.uri)
         };
         callback(null, botResponse);
         return;
@@ -35,26 +35,24 @@ exports.handler = async (event, context, callback) => {
 const getHTML = (title, ogImage, url) => {
   return `
 <!doctype html>
-<html lang="ja">
+<html lang="ja" prefix="og: http://ogp.me/ns#">
 <head prefix="og: http://ogp.me/ns#">
   <meta charset="utf-8" />
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}｜${SERVICE_NAME}</title>
   <meta name="description" content="${DESCRIPTION}" />
-  <meta property="og:url" content="https://${url}" />
-  <meta name="og:type" content="website" />
+  <meta name="author" content="hibohiboo">
   <meta name="keywords" content="TRPG,白地図と足跡,紙芝居" />
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="ja_JP" />
+  <meta property="og:site_name" content="${SERVICE_NAME}">
   <meta property="og:title" content="${title}｜${SERVICE_NAME}" />
   <meta property="og:description" content="${DESCRIPTION}" />
   <meta property="og:image" content="${ogImage}" />
+  <meta property="og:url" content="https://${url}" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:site" content="@Twitter"  />
-  <meta name="twitter:title" content="${title}｜${SERVICE_NAME}" />
-  <meta name="twitter:description" content="${DESCRIPTION}" />
-  <meta name="twitter:image" content="${ogImage}" />
+  <meta name="twitter:site" content="@hibohiboo" />
+  <meta name="twitter:creator" content="@hibohiboo" />
 </head>
 <body></body>
 </html>

@@ -5,6 +5,7 @@ import * as iam from '@aws-cdk/aws-iam'
 import * as s3deploy from '@aws-cdk/aws-s3-deployment'
 import { basePath } from '../../vite.config'
 import * as lambda from "@aws-cdk/aws-lambda";
+import * as origins from '@aws-cdk/aws-cloudfront-origins';
 interface Props extends core.StackProps {
   bucketName: string
 }
@@ -36,6 +37,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
       bucketName,
       accessControl: s3.BucketAccessControl.PRIVATE,
       removalPolicy: core.RemovalPolicy.DESTROY,
+      cors: [{ allowedMethods: [s3.HttpMethods.GET], allowedOrigins: ['*'], allowedHeaders: ['*'] }]
     })
     return bucket
   }
@@ -69,65 +71,74 @@ export class AWSWhiteMapClientStack extends core.Stack {
     identity: cf.OriginAccessIdentity,
     f: cf.experimental.EdgeFunction
   ) {
-    return new cf.CloudFrontWebDistribution(this, 'Distribution', {
+    const defaultPolicyOption = {
+      cachePolicyName: 'MyPolicy',
+      comment: 'A default policy',
+      defaultTtl: core.Duration.days(2),
+      minTtl: core.Duration.seconds(0), // core.Duration.minutes(1),
+      maxTtl: core.Duration.days(365), // core.Duration.days(10),
+      cookieBehavior: cf.CacheCookieBehavior.all(),
+      headerBehavior: cf.CacheHeaderBehavior.none(),
+      queryStringBehavior: cf.CacheQueryStringBehavior.none(),
+      enableAcceptEncodingGzip: true,
+      enableAcceptEncodingBrotli: true,
+    }
+    const myCachePolicy = new cf.CachePolicy(this, 'myDefaultCachePolicy', defaultPolicyOption);
+    const imgCachePolicy = new cf.CachePolicy(this, 'myImageCachePolicy', {
+      headerBehavior: cf.CacheHeaderBehavior.allowList('Access-Control-Request-Headers', 'Access-Control-Request-Method', 'Origin'),
+    });
+    const origin = new origins.S3Origin(bucket, { originAccessIdentity: identity })
+    return new cf.Distribution(this, 'Distribution', {
       // enableIpV6: true,
       // httpVersion: cf.HttpVersion.HTTP2,
       defaultRootObject: '/index.html',
-      viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+
       priceClass: cf.PriceClass.PRICE_CLASS_200,
-
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource: bucket,
-            originAccessIdentity: identity,
-          },
-          behaviors: [
+      defaultBehavior: {
+        origin,
+        allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD,
+        cachedMethods: cf.CachedMethods.CACHE_GET_HEAD,
+        cachePolicy: myCachePolicy,
+      },
+      additionalBehaviors: {
+        'whitemap/scene/*': {
+          origin,
+          edgeLambdas: [
             {
-              isDefaultBehavior: true,
-              allowedMethods: cf.CloudFrontAllowedMethods.GET_HEAD,
-              cachedMethods: cf.CloudFrontAllowedCachedMethods.GET_HEAD,
-              minTtl: core.Duration.seconds(0),
-              maxTtl: core.Duration.days(365),
-              defaultTtl: core.Duration.days(1),
-              forwardedValues: {
-                queryString: false,
-              },
-
+              eventType: cf.LambdaEdgeEventType.VIEWER_REQUEST,
+              functionVersion: f.currentVersion,
+              includeBody: true,
             },
-            {
-              pathPattern: 'whitemap/scene/*',
-              lambdaFunctionAssociations: [
-                {
-
-                  eventType: cf.LambdaEdgeEventType.VIEWER_REQUEST,
-                  lambdaFunction: f.currentVersion,
-                },
-              ],
-            }
           ],
+
         },
-      ],
-      errorConfigurations: [
+        'data': {
+          origin,
+          cachePolicy: imgCachePolicy,
+          allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS
+        }
+      },
+      errorResponses: [
         {
-          errorCode: 403,
-          responsePagePath: "/index.html",
-          responseCode: 200,
-          errorCachingMinTtl: 0,
-        },
-        {
-          errorCode: 404,
+          httpStatus: 404,
+          responseHttpStatus: 200,
           responsePagePath: "/whitemap/index.html",
-          responseCode: 200,
-          errorCachingMinTtl: 0,
+          ttl: core.Duration.seconds(0),
         },
-      ],
+        {
+          httpStatus: 403,
+          responseHttpStatus: 200,
+          responsePagePath: "/index.html",
+          ttl: core.Duration.seconds(0),
+        }
+      ]
+
     })
   }
 
   private deployS3(
     siteBucket: s3.Bucket,
-    distribution: cf.CloudFrontWebDistribution,
+    distribution: cf.Distribution,
     sourcePath: string,
   ) {
     // Deploy site contents to S3 bucket
