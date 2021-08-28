@@ -39,7 +39,12 @@
         <Column field="name" header="名前"></Column>
         <Column field="url" header="">
           <template #body="slotProps">
-            <audio controls loop :src="slotProps.data.url">
+            <audio
+              controls
+              controlslist="nodownload"
+              loop
+              :src="slotProps.data.url"
+            >
               Your browser does not support the
               <code>audio</code> element.
             </audio>
