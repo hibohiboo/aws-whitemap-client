@@ -1,7 +1,7 @@
 'use strict';
-const http = require('http')
+const https = require('https')
 const DOMAIN = 'd1fffsi9eo19ed.cloudfront.net';
-const SERVICE_NAME = '白地図と足跡.test';
+const SERVICE_NAME = '白地図と足跡';
 const DESCRIPTION = '空白の地図。君の足跡。そして';
 
 // OGP を返したい User-Agent をリストで定義しておく。
@@ -13,7 +13,7 @@ const bots = [
 
 const httpGet = (url)=>new Promise((resolve, reject)=>{
   // https://nodejs.org/api/http.html#http_http_get_options_callback
-  http.get(url, (res) => {
+  https.get(url, (res) => {
     const { statusCode } = res;
     const contentType = res.headers['content-type'];
 
@@ -59,7 +59,7 @@ const getBgUrl = (obj) => {
   return obj.fields.bg.mapValue.fields.url.stringValue
 }
 const getTitle = (obj) => {
-  return obj.fields.title;
+  return obj.fields.title.stringValue;
 }
 const projectId = 'aws-whitemap'
 const firestoreApiPath = `firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
@@ -79,7 +79,7 @@ exports.handler = async (event, context, callback) => {
       return;
     }
     const [,sceneId] = matches;
-    const scene = await http.get(`https://${firestoreApiPath}/scenes/${sceneId}`);
+    const scene = await httpGet(`https://${firestoreApiPath}/scenes/${sceneId}`);
     const sceneBgUrl = getBgUrl(scene);
     const url = sceneBgUrl ? sceneBgUrl : defaultBg
     const title = getTitle(scene);
