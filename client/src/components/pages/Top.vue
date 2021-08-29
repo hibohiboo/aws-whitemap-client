@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed } from "vue";
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {},
-  name: "Main",
+  name: 'Main',
   setup: () => {
     return {};
   },

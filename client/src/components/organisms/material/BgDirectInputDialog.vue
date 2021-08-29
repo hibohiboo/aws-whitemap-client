@@ -6,9 +6,9 @@
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     :style="{ width: '50vw' }"
     :draggable="true"
-    :keepInViewPort="true"
-    :minX="0"
-    :minY="0"
+    :keep-in-view-port="true"
+    :min-x="0"
+    :min-y="0"
   >
     <div>
       <h5>タイトル</h5>
@@ -19,7 +19,7 @@
         name="backgroundImage"
         accept="image/*"
         :max-file-size="2000000"
-        :fileLimit="1"
+        :file-limit="1"
         choose-label="画像を選択してください"
         :show-upload-button="false"
         :show-cancel-button="false"
@@ -59,23 +59,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import { useBackgrounImageStore } from "@/stores/materials";
-import FileUpload from "primevue/fileupload";
-import { useSceneStore } from "@/stores/scenes";
+import { defineComponent } from 'vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import { useBackgrounImageStore } from '@/stores/materials';
+import FileUpload from 'primevue/fileupload';
+import { useSceneStore } from '@/stores/scenes';
 
 export default defineComponent({
   components: { Dialog, Button, InputText, FileUpload },
-  name: "BgDirectInputDialog",
+  name: 'BgDirectInputDialog',
 
   setup: () => {
     const sceneStore = useSceneStore();
     const { material, state, upsertDirect, closeModal } =
       useBackgrounImageStore();
-    const title = "登録";
+    const title = '登録';
 
     const selected = (e: { originalEvent: Event; files: File[] }) => {
       if (!e.files.length) return;
@@ -83,7 +83,7 @@ export default defineComponent({
     };
     const upsertMaterial = async () => {
       const material = await upsertDirect();
-      console.log("material", material);
+      console.log('material', material);
       if (material) sceneStore.updateBgImage(material);
     };
 

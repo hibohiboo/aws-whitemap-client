@@ -5,4 +5,4 @@ export const getExtension = (filename: string) => {
     return ext;
   }
   throw new Error('拡張子がありません');
-}
+};

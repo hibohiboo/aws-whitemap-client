@@ -6,9 +6,9 @@
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     :style="{ width: '50vw' }"
     :draggable="true"
-    :keepInViewPort="true"
-    :minX="0"
-    :minY="0"
+    :keep-in-view-port="true"
+    :min-x="0"
+    :min-y="0"
   >
     <div>
       <h5>タイトル※必須</h5>
@@ -19,7 +19,7 @@
         name="bgm"
         accept="audio/*"
         :max-file-size="5000000"
-        :fileLimit="1"
+        :file-limit="1"
         choose-label="音楽を選択してください"
         :show-upload-button="false"
         :show-cancel-button="false"
@@ -59,22 +59,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import { useBgmStore } from "@/stores/materials";
-import FileUpload from "primevue/fileupload";
+import { defineComponent } from 'vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import { useBgmStore } from '@/stores/materials';
+import FileUpload from 'primevue/fileupload';
 
 // Diralog の draggable、keepInViewPort、minX、minYについては型では必須となっているが、実装ではデフォルト値がある。デフォルト値を設定。
 
 export default defineComponent({
   components: { Dialog, Button, InputText, FileUpload },
-  name: "BgmInputDialog",
+  name: 'BgmInputDialog',
 
   setup: () => {
     const { material, state, upsertMaterial, closeModal } = useBgmStore();
-    const title = material.isUpdate ? "編集" : "登録";
+    const title = material.isUpdate ? '編集' : '登録';
 
     const selected = (e: { originalEvent: Event; files: File[] }) => {
       if (!e.files.length) return;

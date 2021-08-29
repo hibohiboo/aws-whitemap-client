@@ -14,8 +14,9 @@ export const serverTimestamp = firebase.firestore.FieldValue.serverTimestamp;
 
 // createdAtがserializeではないオブジェクトなのでstringifyを経由することによりserialize化
 export const toSerializeObject = (obj: any) => JSON.parse(JSON.stringify(obj));
-export const toTimestamp = ({
-  seconds,
-  nanoseconds,
-}: TimeStamp) => new firebase.firestore.Timestamp(Number(seconds), Number(nanoseconds))
-export const emptyTimeStamp: TimeStamp = { seconds: '', nanoseconds: '' } as const;
+export const toTimestamp = ({ seconds, nanoseconds }: TimeStamp) =>
+  new firebase.firestore.Timestamp(Number(seconds), Number(nanoseconds));
+export const emptyTimeStamp: TimeStamp = {
+  seconds: '',
+  nanoseconds: '',
+} as const;

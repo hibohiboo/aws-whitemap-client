@@ -62,18 +62,17 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import { useSceneStore } from '@/stores/scenes';
-import FileUpload from 'primevue/fileupload';
 import { useBackgrounImageStore, useBgmStore } from '@/stores/materials';
 // Diralog の draggable、keepInViewPort、minX、minYについては型では必須となっているが、実装ではデフォルト値がある。デフォルト値を設定。
 
 export default defineComponent({
-  components: { Dialog, Button, InputText, FileUpload, Textarea },
+  components: { Dialog, Button, InputText, Textarea },
   name: 'SceneInputDialog',
 
   setup: () => {

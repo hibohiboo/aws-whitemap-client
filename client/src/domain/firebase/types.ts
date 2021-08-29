@@ -1,6 +1,6 @@
 export interface TimeStamp {
-  seconds: number | string
-  nanoseconds: number | string
+  seconds: number | string;
+  nanoseconds: number | string;
 }
 
 interface UploadUser {
@@ -11,4 +11,4 @@ interface StoreInfo {
   updatedAt: TimeStamp;
   createdAt: TimeStamp;
 }
-export type StoreBase = UploadUser & StoreInfo
+export type StoreBase = UploadUser & StoreInfo;

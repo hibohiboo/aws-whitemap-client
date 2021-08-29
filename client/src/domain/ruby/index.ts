@@ -13,7 +13,7 @@ export const textToRubyTag = (text: string) =>
     /* 括弧を括弧のまま表示したい場合は、括弧の直前に縦棒を入力。 */
     .replace(/[|｜]《(.+?)》/g, '《$1》')
     .replace(/[|｜]（(.+?)）/g, '（$1）')
-    .replace(/[|｜]\((.+?)\)/g, '($1)')
+    .replace(/[|｜]\((.+?)\)/g, '($1)');
 
 export const textToRemoveRubyTag = (text: string) =>
   text
@@ -25,4 +25,4 @@ export const textToRemoveRubyTag = (text: string) =>
     .replace(/([一-龠]+)\(([ぁ-んァ-ヶ]+?)\)/g, '$1')
     .replace(/[|｜]《(.+?)》/g, '《$1》')
     .replace(/[|｜]（(.+?)）/g, '（$1）')
-    .replace(/[|｜]\((.+?)\)/g, '($1)')
+    .replace(/[|｜]\((.+?)\)/g, '($1)');

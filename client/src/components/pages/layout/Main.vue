@@ -37,21 +37,18 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed } from "vue";
-import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
-import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
-import SceneInputDialog from "@/components/organisms/material/SceneInputDialog.vue";
-import BgListDialog from "@/components/organisms/material/BgListDialog.vue";
-import BgmListDialog from "@/components/organisms/material/BgmListDialog.vue";
-import BgDirectInputDialog from "@/components/organisms/material/BgDirectInputDialog.vue";
+import { ref, defineComponent } from 'vue';
+import BackgroundImageInputDialog from '@/components/organisms/material/BackgroundImageInputDialog.vue';
+import BgmInputDialog from '@/components/organisms/material/BgmInputDialog.vue';
+import SceneInputDialog from '@/components/organisms/material/SceneInputDialog.vue';
+import BgListDialog from '@/components/organisms/material/BgListDialog.vue';
+import BgmListDialog from '@/components/organisms/material/BgmListDialog.vue';
+import BgDirectInputDialog from '@/components/organisms/material/BgDirectInputDialog.vue';
 
-import { useAuthStore } from "@/stores/auth";
-import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
-import Button from "primevue/button";
-import Tag from "primevue/tag";
-import InputText from "primevue/inputtext";
-import Dialog from "primevue/dialog";
-import BGGridBox from "../../atoms/BGGridBox.vue";
+import { useAuthStore } from '@/stores/auth';
+import { useBackgrounImageStore, useBgmStore } from '@/stores/materials';
+import Button from 'primevue/button';
+import BGGridBox from '../../atoms/BGGridBox.vue';
 
 export default defineComponent({
   components: {
@@ -62,15 +59,12 @@ export default defineComponent({
     BgmListDialog,
     BgDirectInputDialog,
     Button,
-    Tag,
-    InputText,
-    Dialog,
     BGGridBox,
   },
-  name: "Main",
+  name: 'Main',
   setup: () => {
-    const query = decodeURI(location.search).replace("?", "");
-    const q = ref(query || "");
+    const query = decodeURI(location.search).replace('?', '');
+    const q = ref(query || '');
 
     const { signin, state } = useAuthStore();
     const bgImageStore = useBackgrounImageStore();
@@ -85,7 +79,7 @@ export default defineComponent({
       `https://twitter.com/intent/tweet?url=https://az-php-app.azurewebsites.net/room/${uid}/${roomId}?${encodeURI(
         encodeURI(title),
       )}`; // tweetの画面で1回デコードされるので、tweetの画面でもエンコードされた文字列であるように2回エンコードする
-    const createTags = (tags: string) => tags.split(" ").filter((i) => !!i);
+    const createTags = (tags: string) => tags.split(' ').filter((i) => !!i);
     return {
       openBGCreateModal: bgImageStore.openCreateModal,
       openBGEditModal: bgImageStore.openEditModal,

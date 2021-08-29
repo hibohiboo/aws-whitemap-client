@@ -6,14 +6,14 @@
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     :style="{ width: '70vw' }"
     :draggable="true"
-    :keepInViewPort="true"
-    :minX="0"
-    :minY="0"
+    :keep-in-view-port="true"
+    :min-x="0"
+    :min-y="0"
   >
     <div>
       <DataTable
         :value="list"
-        responsiveLayout="scroll"
+        responsive-layout="scroll"
         @row-click="selectData"
         v-model:filters="filters"
       >
@@ -104,25 +104,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch, watchEffect } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import { useBgmStore } from "@/stores/materials";
+import { defineComponent, reactive, ref, watch } from 'vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import { useBgmStore } from '@/stores/materials';
 
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
-import Tag from "primevue/tag";
-import { useAuthStore } from "@/stores/auth";
-import Toolbar from "primevue/toolbar";
-import type { Material } from "@/domain/material/types";
-import { useSceneStore } from "@/stores/scenes";
-import { FilterMatchMode } from "primevue/api";
+import Tag from 'primevue/tag';
+import { useAuthStore } from '@/stores/auth';
+import type { Material } from '@/domain/material/types';
+import { useSceneStore } from '@/stores/scenes';
+import { FilterMatchMode } from 'primevue/api';
 
 export default defineComponent({
-  components: { Dialog, Button, InputText, DataTable, Column, Toolbar, Tag },
-  name: "BgmListDialog",
+  components: { Dialog, Button, InputText, DataTable, Column, Tag },
+  name: 'BgmListDialog',
 
   setup: () => {
     const sceneStore = useSceneStore();

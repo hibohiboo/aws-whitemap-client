@@ -2,20 +2,22 @@ import { inject, InjectionKey, reactive } from 'vue';
 import { useAuthStore } from '../auth';
 import { Material, MaterialRepository } from '@/domain/material/types';
 import { emptyTimeStamp } from '@/domain/firebase';
-import { backgroundImagesRepository, bgmRepository } from '@/domain/material/repository';
+import {
+  backgroundImagesRepository,
+  bgmRepository,
+} from '@/domain/material/repository';
 import client from '../../api/client';
 import { getExtension } from '@/domain/file';
 
 interface ModalDialog {
-  displayModal: boolean
-  isUpdate: boolean
-  file: File | null
+  displayModal: boolean;
+  isUpdate: boolean;
+  file: File | null;
 }
 
 interface DirectModalDialog {
-  displayDirectModal: boolean
+  displayDirectModal: boolean;
 }
-
 
 const materialStore = (defaultTag: string, repository: MaterialRepository) => {
   const initMaterialInputDialog: ModalDialog & Material & DirectModalDialog = {
@@ -35,11 +37,11 @@ const materialStore = (defaultTag: string, repository: MaterialRepository) => {
     isUpdate: false,
     file: null,
 
-    displayDirectModal: false
+    displayDirectModal: false,
   };
   const materialList = reactive({
     displayModal: false,
-  })
+  });
 
   const material = reactive(initMaterialInputDialog);
 
@@ -88,10 +90,10 @@ const materialStore = (defaultTag: string, repository: MaterialRepository) => {
   };
   const openListModal = () => {
     materialList.displayModal = true;
-  }
+  };
   const closeListModal = () => {
     materialList.displayModal = false;
-  }
+  };
 
   return {
     material,
@@ -108,68 +110,117 @@ export default materialStore;
 
 export type MaterialStore = ReturnType<typeof materialStore>;
 
-export const backgroundImageStoreKey: InjectionKey<MaterialStore> = Symbol('backgroundImageStore');
+export const backgroundImageStoreKey: InjectionKey<MaterialStore> = Symbol(
+  'backgroundImageStore',
+);
 export const bgmStoreKey: InjectionKey<MaterialStore> = Symbol('bgmStore');
-
 
 const useStore = (store: MaterialStore, repository: MaterialRepository) => {
   const { state } = useAuthStore();
   const upsertMaterial = async () => {
     const { uid } = state;
-    const { id, name, url, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl, file, isUpdate } =
-      store.material;
+    const {
+      id,
+      name,
+      url,
+      tags,
+      createdAt,
+      updatedAt,
+      materialSiteName,
+      materialSiteUrl,
+      licenseName,
+      licenseUrl,
+      file,
+      isUpdate,
+    } = store.material;
     if (!name) {
       alert('名前は必須です');
       return;
     }
     if (!isUpdate && !file) {
-      alert('ファイルは必須です')
+      alert('ファイルは必須です');
       return;
     }
     let tmpUrl = url;
     if (file) {
       const ext = getExtension(file.name);
       await repository.putFile(client, uid, id, ext, file);
-      tmpUrl = repository.createUrl(uid, id, ext)
+      tmpUrl = repository.createUrl(uid, id, ext);
     }
 
+    const material = {
+      id,
+      name,
+      url: tmpUrl,
+      uid,
+      tags,
+      createdAt,
+      updatedAt,
+      materialSiteName,
+      materialSiteUrl,
+      licenseName,
+      licenseUrl,
+    };
 
-    const material = { id, name, url: tmpUrl, uid, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl }
-
-    const merge = store.material.isUpdate ? repository.update : repository.create;
+    const merge = store.material.isUpdate
+      ? repository.update
+      : repository.create;
     await merge(id, material, state.uid);
     store.closeModal();
   };
 
   const upsertDirect = async () => {
     const { uid } = state;
-    const { id, name, url, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl, file } =
-      store.material;
+    const {
+      id,
+      name,
+      url,
+      tags,
+      createdAt,
+      updatedAt,
+      materialSiteName,
+      materialSiteUrl,
+      licenseName,
+      licenseUrl,
+      file,
+    } = store.material;
     if (!name) {
       alert('名前は必須です');
       return;
     }
     if (!file) {
-      alert('ファイルは必須です')
+      alert('ファイルは必須です');
       return;
     }
     let tmpUrl = url;
-    console.log('upload start', url)
+    console.log('upload start', url);
     if (file) {
       const ext = getExtension(file.name);
       await repository.putFile(client, uid, id, ext, file);
-      tmpUrl = repository.createUrl(uid, id, ext)
+      tmpUrl = repository.createUrl(uid, id, ext);
     }
 
-    const material = { id, name, url: tmpUrl, uid, tags, createdAt, updatedAt, materialSiteName, materialSiteUrl, licenseName, licenseUrl }
-    console.log('uploaded', material)
+    const material = {
+      id,
+      name,
+      url: tmpUrl,
+      uid,
+      tags,
+      createdAt,
+      updatedAt,
+      materialSiteName,
+      materialSiteUrl,
+      licenseName,
+      licenseUrl,
+    };
+    console.log('uploaded', material);
     store.closeModal();
     return material;
   };
-  const fetchList = async () => repository.getItems()
+  const fetchList = async () => repository.getItems();
 
   return { ...store, upsertMaterial, state, fetchList, upsertDirect };
-}
+};
 
 export const useBackgrounImageStore = () => {
   const store = inject(backgroundImageStoreKey);

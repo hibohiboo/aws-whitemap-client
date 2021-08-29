@@ -1,16 +1,16 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
     path: '/',
     name: 'Top',
-    component: import('../components/pages/Top.vue')
+    component: import('../components/pages/Top.vue'),
   },
   {
     path: '/scene/:id',
     name: 'Scene',
-    component: () => import('../components/pages/Scene.vue')
-  }
+    component: () => import('../components/pages/Scene.vue'),
+  },
 ];
 
 const router = createRouter({
@@ -18,4 +18,4 @@ const router = createRouter({
   routes: routes,
 });
 
-export default router
+export default router;

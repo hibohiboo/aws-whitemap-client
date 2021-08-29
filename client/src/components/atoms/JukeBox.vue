@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, toRef, toRefs } from "vue";
+import { computed, defineComponent } from 'vue';
 // import MidiPlayer from "midi-player-js";
 // import Soundfont from "soundfont-player";
 // const ac = new AudioContext();
@@ -51,7 +51,7 @@ import { computed, defineComponent, toRef, toRefs } from "vue";
 //     "soundfont-player": "^0.12.0",
 
 export default defineComponent({
-  name: "BGGridBox",
+  name: 'BGGridBox',
   props: {
     src: String,
     auto: Boolean,
