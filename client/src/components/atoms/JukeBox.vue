@@ -10,6 +10,7 @@
   />
   <audio
     controls
+    controlslist="nodownload"
     loop
     :autoplay="auto"
     style="width: 100%"

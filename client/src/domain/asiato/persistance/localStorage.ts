@@ -5,8 +5,9 @@ export const insertQueue = (asiatoList: Asiato[], asiato: Asiato) => {
   if (asiatoList.length < 30) {
     return [asiato, ...asiatoList];
   }
-  const [, ...rest] = asiatoList;
-  return [asiato, ...rest];
+  const tmp = [...asiatoList];
+  tmp.pop();
+  return [asiato, ...tmp];
 }
 
 const ASIATO_KEY = 'asiato';

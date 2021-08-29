@@ -4,6 +4,8 @@ import * as cf from '@aws-cdk/aws-cloudfront'
 import * as iam from '@aws-cdk/aws-iam'
 import * as s3deploy from '@aws-cdk/aws-s3-deployment'
 import { basePath } from '../../vite.config'
+import * as lambda from "@aws-cdk/aws-lambda";
+import * as origins from '@aws-cdk/aws-cloudfront-origins';
 interface Props extends core.StackProps {
   bucketName: string
 }
@@ -17,8 +19,10 @@ export class AWSWhiteMapClientStack extends core.Stack {
     const identity = this.createIdentity(bucket)
     // S3バケットポリシーで、CloudFrontのオリジンアクセスアイデンティティを許可
     this.createPolicy(bucket, identity)
+    // lambda edge作成
+    const f = this.createLambdaEdge()
     // CloudFrontディストリビューションを作成
-    const distribution = this.createCloudFront(bucket, identity)
+    const distribution = this.createCloudFront(bucket, identity, f)
     // 指定したディレクトリをデプロイ
     this.deployS3(bucket, distribution, '../dist')
 
@@ -33,12 +37,14 @@ export class AWSWhiteMapClientStack extends core.Stack {
       bucketName,
       accessControl: s3.BucketAccessControl.PRIVATE,
       removalPolicy: core.RemovalPolicy.DESTROY,
+      cors: [{ allowedMethods: [s3.HttpMethods.GET], allowedOrigins: ['*'], allowedHeaders: ['*'] }]
     })
     return bucket
   }
 
   private createIdentity(bucket: s3.Bucket) {
     const identity = new cf.OriginAccessIdentity(this, 'OriginAccessIdentity', {
+
       comment: `${bucket.bucketName} access identity`,
     })
     return identity
@@ -63,54 +69,76 @@ export class AWSWhiteMapClientStack extends core.Stack {
   private createCloudFront(
     bucket: s3.Bucket,
     identity: cf.OriginAccessIdentity,
+    f: cf.experimental.EdgeFunction
   ) {
-    return new cf.CloudFrontWebDistribution(this, 'Distribution', {
+    const defaultPolicyOption = {
+      cachePolicyName: 'MyPolicy',
+      comment: 'A default policy',
+      defaultTtl: core.Duration.days(2),
+      minTtl: core.Duration.seconds(0), // core.Duration.minutes(1),
+      maxTtl: core.Duration.days(365), // core.Duration.days(10),
+      cookieBehavior: cf.CacheCookieBehavior.all(),
+      headerBehavior: cf.CacheHeaderBehavior.none(),
+      queryStringBehavior: cf.CacheQueryStringBehavior.none(),
+      enableAcceptEncodingGzip: true,
+      enableAcceptEncodingBrotli: true,
+    }
+    const myCachePolicy = new cf.CachePolicy(this, 'myDefaultCachePolicy', defaultPolicyOption);
+    const imgCachePolicy = new cf.CachePolicy(this, 'myImageCachePolicy', {
+      headerBehavior: cf.CacheHeaderBehavior.allowList('Access-Control-Request-Headers', 'Access-Control-Request-Method', 'Origin'),
+    });
+    const origin = new origins.S3Origin(bucket, { originAccessIdentity: identity })
+    return new cf.Distribution(this, 'Distribution', {
       // enableIpV6: true,
       // httpVersion: cf.HttpVersion.HTTP2,
       defaultRootObject: '/index.html',
-      viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+
       priceClass: cf.PriceClass.PRICE_CLASS_200,
-      originConfigs: [
-        {
-          s3OriginSource: {
-            s3BucketSource: bucket,
-            originAccessIdentity: identity,
-          },
-          behaviors: [
+      defaultBehavior: {
+        origin,
+        allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD,
+        cachedMethods: cf.CachedMethods.CACHE_GET_HEAD,
+        cachePolicy: myCachePolicy,
+      },
+      additionalBehaviors: {
+        'whitemap/scene/*': {
+          origin,
+          edgeLambdas: [
             {
-              isDefaultBehavior: true,
-              allowedMethods: cf.CloudFrontAllowedMethods.GET_HEAD,
-              cachedMethods: cf.CloudFrontAllowedCachedMethods.GET_HEAD,
-              minTtl: core.Duration.seconds(0),
-              maxTtl: core.Duration.days(365),
-              defaultTtl: core.Duration.days(1),
-              forwardedValues: {
-                queryString: false,
-              },
+              eventType: cf.LambdaEdgeEventType.VIEWER_REQUEST,
+              functionVersion: f.currentVersion,
+              includeBody: true,
             },
           ],
+
         },
-      ],
-      errorConfigurations: [
+        'data': {
+          origin,
+          cachePolicy: imgCachePolicy,
+          allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS
+        }
+      },
+      errorResponses: [
         {
-          errorCode: 403,
-          responsePagePath: "/index.html",
-          responseCode: 200,
-          errorCachingMinTtl: 0,
-        },
-        {
-          errorCode: 404,
+          httpStatus: 404,
+          responseHttpStatus: 200,
           responsePagePath: "/whitemap/index.html",
-          responseCode: 200,
-          errorCachingMinTtl: 0,
+          ttl: core.Duration.seconds(0),
         },
-      ],
+        {
+          httpStatus: 403,
+          responseHttpStatus: 200,
+          responsePagePath: "/index.html",
+          ttl: core.Duration.seconds(0),
+        }
+      ]
+
     })
   }
 
   private deployS3(
     siteBucket: s3.Bucket,
-    distribution: cf.CloudFrontWebDistribution,
+    distribution: cf.Distribution,
     sourcePath: string,
   ) {
     // Deploy site contents to S3 bucket
@@ -121,5 +149,14 @@ export class AWSWhiteMapClientStack extends core.Stack {
       distributionPaths: ['/*'],
       destinationKeyPrefix: basePath,
     })
+  }
+
+  private createLambdaEdge() {
+    const f = new cf.experimental.EdgeFunction(this, "lambda-edge", {
+      code: lambda.Code.fromAsset("dist/ogp"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_14_X,
+    });
+    return f;
   }
 }
