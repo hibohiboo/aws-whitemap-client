@@ -6,15 +6,17 @@
     :breakpoints="{ '960px': '75vw', '640px': '100vw' }"
     :style="{ width: '50vw' }"
     :draggable="true"
-    :keepInViewPort="true"
-    :minX="0"
-    :minY="0"
+    :keep-in-view-port="true"
+    :min-x="0"
+    :min-y="0"
   >
     <div>
       <h5>タイトル※必須</h5>
       <InputText type="text" v-model="sceneDialog.title" />
       <h5>タイトルルビ</h5>
       <InputText type="text" v-model="sceneDialog.titleRuby" />
+      <h5>描写</h5>
+      <Textarea v-model="sceneDialog.description" :auto-resize="true" />
       <h5>画像</h5>
       <div>
         <Button
@@ -60,25 +62,26 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import { useSceneStore } from "@/stores/scenes";
-import FileUpload from "primevue/fileupload";
-import { useBackgrounImageStore, useBgmStore } from "@/stores/materials";
+import { computed, defineComponent, ref } from 'vue';
+import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
+import { useSceneStore } from '@/stores/scenes';
+import FileUpload from 'primevue/fileupload';
+import { useBackgrounImageStore, useBgmStore } from '@/stores/materials';
 // Diralog の draggable、keepInViewPort、minX、minYについては型では必須となっているが、実装ではデフォルト値がある。デフォルト値を設定。
 
 export default defineComponent({
-  components: { Dialog, Button, InputText, FileUpload },
-  name: "SceneInputDialog",
+  components: { Dialog, Button, InputText, FileUpload, Textarea },
+  name: 'SceneInputDialog',
 
   setup: () => {
     const { sceneDialog, state, upsert, closeModal } = useSceneStore();
     const bgStore = useBackgrounImageStore();
     const bgmStore = useBgmStore();
     const title = computed(() =>
-      sceneDialog.isUpdate ? "編集" : "新しいシーンを登録",
+      sceneDialog.isUpdate ? '編集' : '新しいシーンを登録',
     );
     const openBgDireactModal = () => {
       bgStore.openDirectModal(sceneDialog.id, sceneDialog.title);

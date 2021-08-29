@@ -55,7 +55,7 @@
               :label="item.to_name"
               icon="pi pi-caret-right"
               class="flex m-2 next-button"
-              iconPos="right"
+              icon-pos="right"
           /></router-link>
         </div>
       </div>
@@ -144,46 +144,35 @@
 </template>
 
 <script lang="ts">
-import { ref, defineComponent, computed, reactive } from "vue";
-import BackgroundImageInputDialog from "@/components/organisms/material/BackgroundImageInputDialog.vue";
-import BgmInputDialog from "@/components/organisms/material/BgmInputDialog.vue";
-import { useAuthStore } from "@/stores/auth";
-import { useSceneStore } from "@/stores/scenes";
-import Button from "primevue/button";
-import Tag from "primevue/tag";
-import InputText from "primevue/inputtext";
-import Dialog from "primevue/dialog";
-import BGGridBox from "../atoms/BGGridBox.vue";
-import { GLOBAL_SCENARIO_ID } from "@/domain/scenario/constants";
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
-import JukeBox from "@/components/atoms/JukeBox.vue";
-import { asiatoRepository } from "@/domain/asiato/repository";
-import format from "date-fns/format";
-import addHours from "date-fns/addHours";
+import { ref, defineComponent, computed, reactive } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useSceneStore } from '@/stores/scenes';
+import Button from 'primevue/button';
+
+import { GLOBAL_SCENARIO_ID } from '@/domain/scenario/constants';
+import { onBeforeRouteUpdate, useRoute } from 'vue-router';
+import JukeBox from '@/components/atoms/JukeBox.vue';
+import { asiatoRepository } from '@/domain/asiato/repository';
+import format from 'date-fns/format';
+import addHours from 'date-fns/addHours';
 
 export default defineComponent({
   components: {
-    BackgroundImageInputDialog,
     JukeBox,
-    BgmInputDialog,
     Button,
-    Tag,
-    InputText,
-    Dialog,
-    BGGridBox,
   },
-  name: "Main",
+  name: 'Main',
   setup: () => {
     const route = useRoute();
     const { state } = useAuthStore();
     const scenario = reactive({
       id: GLOBAL_SCENARIO_ID,
-      title: "白地図と足跡",
-      firstSceneId: "",
+      title: '白地図と足跡',
+      firstSceneId: '',
     });
 
-    if (!route.params.id || typeof route.params.id !== "string") {
-      location.href = "/whitemap/";
+    if (!route.params.id || typeof route.params.id !== 'string') {
+      location.href = '/whitemap/';
       return;
     }
     const id = ref(route.params.id);
@@ -206,9 +195,9 @@ export default defineComponent({
       sceneStore.openEditModal({ ...sceneStore.scene });
     };
     onBeforeRouteUpdate((to, from) => {
-      console.log("scene", sceneStore.scene);
-      console.log("route", `to:${to}, from:${from}, id: ${id}`);
-      if (!to.params.id || typeof to.params.id !== "string") {
+      console.log('scene', sceneStore.scene);
+      console.log('route', `to:${to}, from:${from}, id: ${id.value}`);
+      if (!to.params.id || typeof to.params.id !== 'string') {
         return;
       }
 
@@ -223,7 +212,7 @@ export default defineComponent({
         id: a.scene_id,
         created_at: format(
           addHours(new Date(a.created_at), 9),
-          "yyyy-MM-dd HH:mm:ss",
+          'yyyy-MM-dd HH:mm:ss',
         ),
       })),
     );
@@ -240,8 +229,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$mincho: "游明朝", YuMincho, "Hiragino Mincho ProN W3", "ヒラギノ明朝 ProN W3",
-  "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif;
+$mincho: '游明朝', YuMincho, 'Hiragino Mincho ProN W3', 'ヒラギノ明朝 ProN W3',
+  'Hiragino Mincho ProN', 'HG明朝E', 'ＭＳ Ｐ明朝', 'ＭＳ 明朝', serif;
 
 $hutidori: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
 
