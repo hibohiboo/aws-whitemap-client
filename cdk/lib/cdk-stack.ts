@@ -36,6 +36,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
     const bucket = new s3.Bucket(this, 'S3Bucket', {
       bucketName,
       accessControl: s3.BucketAccessControl.PRIVATE,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: core.RemovalPolicy.DESTROY,
       cors: [{ allowedMethods: [s3.HttpMethods.GET], allowedOrigins: ['*'], allowedHeaders: ['*'] }]
     })
@@ -82,6 +83,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
       queryStringBehavior: cf.CacheQueryStringBehavior.none(),
       enableAcceptEncodingGzip: true,
       enableAcceptEncodingBrotli: true,
+
     }
     const myCachePolicy = new cf.CachePolicy(this, 'myDefaultCachePolicy', defaultPolicyOption);
     const imgCachePolicy = new cf.CachePolicy(this, 'myImageCachePolicy', {
@@ -91,6 +93,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
     return new cf.Distribution(this, 'Distribution', {
       // enableIpV6: true,
       // httpVersion: cf.HttpVersion.HTTP2,
+
       defaultRootObject: '/index.html',
 
       priceClass: cf.PriceClass.PRICE_CLASS_200,
@@ -99,10 +102,12 @@ export class AWSWhiteMapClientStack extends core.Stack {
         allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD,
         cachedMethods: cf.CachedMethods.CACHE_GET_HEAD,
         cachePolicy: myCachePolicy,
+        viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
       },
       additionalBehaviors: {
         'whitemap/scene/*': {
           origin,
+          viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           edgeLambdas: [
             {
               eventType: cf.LambdaEdgeEventType.VIEWER_REQUEST,
@@ -115,7 +120,8 @@ export class AWSWhiteMapClientStack extends core.Stack {
         'data': {
           origin,
           cachePolicy: imgCachePolicy,
-          allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS
+          allowedMethods: cf.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          viewerProtocolPolicy: cf.ViewerProtocolPolicy.REDIRECT_TO_HTTPS
         }
       },
       errorResponses: [
