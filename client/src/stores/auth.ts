@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
 import { inject, InjectionKey, reactive } from 'vue';
 import { auth } from '@/domain/firebase';
+import { onAuthStateChanged, signInAnonymously, User } from 'firebase/auth';
 
 const authStore = () => {
   console.log('init authStore');
@@ -11,7 +11,7 @@ const authStore = () => {
     uid: '',
   });
 
-  const setUser = (user: firebase.User | null) => {
+  const setUser = (user: User | null) => {
     state.isLoggedin = !!user;
     if (user) {
       state.displayName = user.displayName ?? '';
@@ -21,12 +21,11 @@ const authStore = () => {
   };
 
   const signin = async () => {
-    await auth.signInAnonymously();
+    await signInAnonymously(auth);
   };
 
   const signout = () => auth.signOut();
-
-  auth.onAuthStateChanged((user) => setUser(user));
+  onAuthStateChanged(auth, (user) => setUser(user));
 
   return {
     state,

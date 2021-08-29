@@ -5,10 +5,11 @@ import {
   toTimestamp,
 } from '@/domain/firebase';
 import type { TimeStamp } from '@/domain/firebase/types';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 import type { Scene } from '../types';
 
 export const createRepository = (key: string) => {
-  const collections = () => db.collection(key);
+  const collections = () => collection(db, key);
 
   const convertFirebaseDocToSerializableObject = (data: any, id: string) => {
     if (!data) throw new Error('create failed data is empty');
@@ -29,14 +30,14 @@ export const createRepository = (key: string) => {
     const list = collections();
 
     await Promise.all([
-      list.doc(id).set({
+      setDoc(doc(list, id), {
         ...item,
         uid,
         createdAt: createdAt ? toTimestamp(createdAt) : serverTimestamp(),
         updatedAt: serverTimestamp(),
       }),
     ]);
-    const newRef = await list.doc(id).get();
+    const newRef = await getDoc(doc(list, id));
     return convertFirebaseDocToSerializableObject(newRef.data(), id);
   };
   // ----
@@ -50,14 +51,14 @@ export const createRepository = (key: string) => {
   const getId = async () => {
     const list = collections();
 
-    const { id } = await list.doc();
+    const { id } = await doc(list);
     return id;
   };
   const getItemById = async (id: string) => {
     const list = collections();
 
-    const doc = await list.doc(id).get();
-    return convertFirebaseDocToSerializableObject(doc.data(), id);
+    const d = await getDoc(doc(list, id));
+    return convertFirebaseDocToSerializableObject(d.data(), id);
   };
   return { create, update, getId, getItemById };
 };
