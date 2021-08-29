@@ -153,7 +153,7 @@ export class AWSWhiteMapClientStack extends core.Stack {
 
   private createLambdaEdge() {
     const f = new cf.experimental.EdgeFunction(this, "lambda-edge", {
-      code: lambda.Code.fromAsset("src/ogp"),
+      code: lambda.Code.fromAsset("dist/ogp"),
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_14_X,
     });

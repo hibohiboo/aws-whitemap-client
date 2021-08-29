@@ -1,10 +1,19 @@
 import * as https from 'https';
 import type { CloudFrontRequestHandler } from 'aws-lambda';
+import { FireStoreScene, SceneBg } from './types';
 
+declare var DEFINE_DOMAIN: string;
+declare var DEFINE_SERVICE_NAME: string;
+declare var DEFINE_DESCRIPTION: string;
+declare var DEFINE_FIREBASE_PROJECT_ID: string;
+declare var DEFINE_DEFAULT_OGP_IMAGE_URL: string;
 
-const DOMAIN = 'd1fffsi9eo19ed.cloudfront.net';
-const SERVICE_NAME = '白地図と足跡';
-const DESCRIPTION = '空白の地図。君の足跡。そして';
+const DOMAIN = DEFINE_DOMAIN;
+const SERVICE_NAME = DEFINE_SERVICE_NAME;
+const DESCRIPTION = DEFINE_DESCRIPTION;
+const projectId = DEFINE_FIREBASE_PROJECT_ID;
+const defaultBg = DEFINE_DEFAULT_OGP_IMAGE_URL;
+const firestoreApiPath = `firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
 
 // OGP を返したい User-Agent をリストで定義しておく。
 const bots = [
@@ -55,44 +64,6 @@ const httpGet = <T>(url: string): Promise<T> => new Promise((resolve, reject) =>
   });
 })
 
-interface NullValue {
-  nullValue: null
-}
-interface StringValue {
-  stringValue: string
-}
-
-interface TimestampValue {
-  mapValue: {
-    fields: {
-      seconds: StringValue
-      nanoseconds: StringValue
-    }
-  }
-}
-interface SceneBg {
-  mapValue: {
-    fields: {
-      materialSiteUrl: StringValue
-      updatedAt: TimestampValue
-      licenseUrl: StringValue
-      licenseName: StringValue
-      id: StringValue
-      uid: StringValue
-      materialSiteName: StringValue
-      url: StringValue
-      name: StringValue
-      tags: StringValue
-    }
-  }
-}
-interface FireStoreScene {
-  name: string,
-  fields: {
-    bg: SceneBg | NullValue
-    title: StringValue
-  }
-}
 const getBgUrl = (scene: FireStoreScene) => {
   const bg = scene.fields.bg as SceneBg
   if (!bg.mapValue) {
@@ -103,38 +74,6 @@ const getBgUrl = (scene: FireStoreScene) => {
 const getTitle = (scene: FireStoreScene) => {
   return scene.fields.title.stringValue;
 }
-const projectId = 'aws-whitemap'
-const firestoreApiPath = `firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents`;
-const defaultBg = 'https://d1fffsi9eo19ed.cloudfront.net/data/background-images/W8NO28NuAQgRsiZAYYMNmQ29O2z2/r1SCQH1OrH8hCD1CF7Ka.png';
-
-export const handler: CloudFrontRequestHandler = async (event, context, callback) => {
-  const request = event.Records[0].cf.request;
-  const userAgent = request.headers['user-agent'][0].value;
-  const isBotAccess = bots.some((bot) => userAgent.includes(bot));
-  if (!isBotAccess) {
-    callback(null, request);
-    return;
-  }
-  const matches = /scene\/([^/]+)/.exec(request.uri)
-  if (!matches) {
-    callback(null, request);
-    return request; // すべて Promise<void> だと怒られる
-  }
-  const [, sceneId] = matches;
-  const scene = await httpGet<FireStoreScene>(`https://${firestoreApiPath}/scenes/${sceneId}`);
-  const sceneBgUrl = getBgUrl(scene);
-  const url = sceneBgUrl ? sceneBgUrl : defaultBg
-  const title = getTitle(scene);
-  // Create OGP response
-  const botResponse = {
-    status: '200',
-    headers: { 'content-type': [{ value: 'text/html;charset=UTF-8' }] },
-    body: getHTML(title, url, DOMAIN + request.uri)
-  };
-  callback(null, botResponse);
-  return;
-};
-
 
 const getHTML = (title: string, ogImage: string, url: string) => {
   return `
@@ -162,3 +101,32 @@ const getHTML = (title: string, ogImage: string, url: string) => {
 </html>
 `;
 };
+
+export const handler: CloudFrontRequestHandler = async (event, context, callback) => {
+  const request = event.Records[0].cf.request;
+  const userAgent = request.headers['user-agent'][0].value;
+  const isBotAccess = bots.some((bot) => userAgent.includes(bot));
+  if (!isBotAccess) {
+    callback(null, request);
+    return;
+  }
+  const matches = /scene\/([^/]+)/.exec(request.uri)
+  if (!matches) {
+    callback(null, request);
+    return request; // TODO: すべて Promise<void> だとCloudFrontRequestHandler型に怒られる
+  }
+  const [, sceneId] = matches;
+  const scene = await httpGet<FireStoreScene>(`https://${firestoreApiPath}/scenes/${sceneId}`);
+  const sceneBgUrl = getBgUrl(scene);
+  const url = sceneBgUrl ? sceneBgUrl : defaultBg
+  const title = getTitle(scene);
+  // Create OGP response
+  const botResponse = {
+    status: '200',
+    headers: { 'content-type': [{ value: 'text/html;charset=UTF-8' }] },
+    body: getHTML(title, url, DOMAIN + request.uri)
+  };
+  callback(null, botResponse);
+  return;
+};
+

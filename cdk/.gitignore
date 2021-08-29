@@ -6,4 +6,6 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
-!src/ogp/index.js
+dist
+!build.js
+.env
