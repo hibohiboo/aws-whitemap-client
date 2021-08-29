@@ -102,18 +102,16 @@ const getHTML = (title: string, ogImage: string, url: string) => {
 `;
 };
 
-export const handler: CloudFrontRequestHandler = async (event, context, callback) => {
+export const handler: CloudFrontRequestHandler = async (event) => {
   const request = event.Records[0].cf.request;
   const userAgent = request.headers['user-agent'][0].value;
   const isBotAccess = bots.some((bot) => userAgent.includes(bot));
   if (!isBotAccess) {
-    callback(null, request);
-    return;
+    return request;
   }
   const matches = /scene\/([^/]+)/.exec(request.uri)
   if (!matches) {
-    callback(null, request);
-    return request; // TODO: すべて Promise<void> だとCloudFrontRequestHandler型に怒られる
+    return request;
   }
   const [, sceneId] = matches;
   const scene = await httpGet<FireStoreScene>(`https://${firestoreApiPath}/scenes/${sceneId}`);
@@ -126,7 +124,6 @@ export const handler: CloudFrontRequestHandler = async (event, context, callback
     headers: { 'content-type': [{ value: 'text/html;charset=UTF-8' }] },
     body: getHTML(title, url, DOMAIN + request.uri)
   };
-  callback(null, botResponse);
-  return;
+  return botResponse;
 };
 
